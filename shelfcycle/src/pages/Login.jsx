@@ -28,6 +28,7 @@ const Login = () => {
   console.log("Login", data)
 
   return (
+    <section id="login">
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96 mt-[-100px]">
         <h2 className="text-2xl font-semibold text-center">Welcome Back</h2>
@@ -36,7 +37,7 @@ const Login = () => {
         </p>
         <form onSubmit={handleSubmit}>
         {/* Email Input */}
-        <div className="mb-4">
+        <div className="mb-4 grid">
           <label className="block text-gray-700 font-medium">Email</label>
           <input
             type="email"
@@ -76,7 +77,7 @@ const Login = () => {
 
         {/* Signup Link */}
         <p className="text-center text-gray-600 mt-4">
-          Don't have an account?
+          Don't have an account? 
           <Link to="/signup" className="text-blue-500 hover:underline hover:text-blue-700">
             Sign up
           </Link>
@@ -84,6 +85,7 @@ const Login = () => {
         </form>
       </div>
     </div>
+    </section>
   );
 };
 
