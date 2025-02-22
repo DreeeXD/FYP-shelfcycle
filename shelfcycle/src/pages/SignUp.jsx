@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import imgToBase64 from "../helpers/imgToBase64";
+import SummaryAPI from "../common";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,10 +13,13 @@ const SignUp = () => {
       email: "",
       password: "",
       confirmPassword: "",
-      name: "",
+      username: "",
       phone: "",
       uploadPic: ""
     });
+
+    const navigate = useNavigate()
+
   
     const handleChange = (e) => {
       const {name, value} = e.target
@@ -39,11 +44,43 @@ const SignUp = () => {
 
     }
   
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
+
+      if(data.password === data.confirmPassword){
+        //console.log("SummaryAPI.signUp.url", SummaryAPI.signUp.url)
+        const dataResponse = await fetch(SummaryAPI.signUp.url,{
+          method: SummaryAPI.signUp.method,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+  
+        
+        const dataAPI = await dataResponse.json()
+
+        if(dataAPI.success){
+          toast.success(dataAPI.message)
+          navigate("/login")
+
+        }
+        if(dataAPI.error){
+          toast.error(dataAPI.message)
+        }
+
+        // toast(dataAPI.message)
+  
+        //console.log("data", dataAPI)
+
+      }else{
+        console.log("Please enter a matching password and try again.")
+      }
+
+      
     }
   
-    console.log("Login", data)
+    //console.log("Login", data)
 
   return (
     <section id="signup">
@@ -62,8 +99,8 @@ const SignUp = () => {
           <input
             type="text"
             placeholder="Enter your username"
-            name="name"
-            value={data.name}
+            name="username"
+            value={data.username}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"

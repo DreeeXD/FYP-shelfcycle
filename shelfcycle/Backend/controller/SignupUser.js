@@ -5,16 +5,26 @@ async function SignupUserController(request, response) {
         console.log("request.body", request.body)
         
         const { username, email, phone, password } = request.body
-        if (!username ){
+
+        
+        const user = await userModel.findOne({email})
+        console.log("user", user)
+
+        if (user) {
+            throw new Error("This email is already in use. Please try to log in")
+        }
+
+
+        if (!username){
             throw new Error('Please enter your username')
         }
-        if (!email ){
+        if (!email){
             throw new Error('Please provide your email address')
         }
-        if (!phone ){
+        if (!phone){
             throw new Error('Please provide your phone number')
         }
-        if (!password ){
+        if (!password){
             throw new Error('You need to provide your password')
         }
 
@@ -37,6 +47,7 @@ async function SignupUserController(request, response) {
 
 
         const saveUser = await userData.save()
+        
 
         response.status(201).json({
             data: saveUser,

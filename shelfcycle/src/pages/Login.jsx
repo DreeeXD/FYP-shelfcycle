@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import SummaryAPI from "../common";
+import { toast } from "react-toastify";
 
 
 const Login = () => {
@@ -10,6 +12,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const {name, value} = e.target
@@ -21,8 +25,29 @@ const Login = () => {
     })
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const dataResponse = await fetch(SummaryAPI.login.url, {
+      method: SummaryAPI.login.method,
+      credentials : 'include',
+      headers: {
+        'Content-Type': 'application/json',
+
+      },
+      body: JSON.stringify(data)
+    })
+    const dataAPI = await dataResponse.json()
+
+    if(dataAPI.success){
+      toast.success(dataAPI.message)
+      navigate("/")
+
+    }
+    if(dataAPI.error){
+      toast.error(dataAPI.message)
+    }
+
   }
 
   console.log("Login", data)
