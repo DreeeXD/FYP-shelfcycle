@@ -1,6 +1,6 @@
 async function userDetailsController (request, response){
 
-    try{
+    try{ 
 
     }
     catch(error){

@@ -8,12 +8,13 @@ import { useEffect } from 'react';
 function App() {
 
   const fetchUserDetails = async () => {
+
     const dataResponse = await fetch (SummaryAPI.currentUser.url, {
       method: SummaryAPI.currentUser.method,
-      credentials : 'include',  //this will take the cookies token,, if not included then token will not be sent to backend
-      headers: {
-        "Content-Type": "application/json",
-    }
+      credentials : "include",  //this will take the cookies token,, if not included then token will not be sent to backend
+    //   headers: {
+    //     "Content-Type": "application/json",
+    // }
     })
 
     // const contentType = dataResponse.headers.get("content-type");

@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 async function authenticationToken(request, response, next){ 
     try{
-        const token = request.cookies?.token
+        const token = request.cookies?.token || request.headers
 
         jwt.verify(token, process.env.Secret_Token_Key, function(error, decoded) {
             console.log(error)

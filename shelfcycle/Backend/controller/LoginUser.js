@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 async function LoginUserController(request, response) {
     try{
 
-        const { email, password} = request.body
+        const {email, password} = request.body
 
 
         if (!email){
@@ -28,7 +28,7 @@ async function LoginUserController(request, response) {
         if (checkPassword){
             const tokenData = {
                 _id : user._id,
-                email: user._email
+                email: user.email,
             }
 
             const token = await jwt.sign(tokenData, process.env.Secret_Token_Key, { expiresIn: '8h' });
