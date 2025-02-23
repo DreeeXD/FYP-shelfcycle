@@ -31,7 +31,7 @@ async function LoginUserController(request, response) {
                 email: user._email
             }
 
-            const token = await jwt.sign(tokenData, process.env.Secret_Token_Key, { expiresIn: '5h' });
+            const token = await jwt.sign(tokenData, process.env.Secret_Token_Key, { expiresIn: '8h' });
             const tokenOption = {
                 httpOnly: true,
                 secure: true

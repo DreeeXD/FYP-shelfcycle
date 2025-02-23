@@ -1,3 +1,4 @@
+
 const domainBackend =  "http://localhost:8081"
 
 
@@ -9,6 +10,10 @@ const SummaryAPI = {
     login : {
         url : `${domainBackend}/api/login`,
         method : "post"
+    },
+    currentUser : {
+        url : `${domainBackend}/api/user-details`,
+        method : "get"
     }
 }
 
