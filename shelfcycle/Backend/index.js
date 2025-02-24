@@ -11,7 +11,8 @@ app.use(cors({
     origin: process.env.FRONTEND_URL,
     credentials: true
 }))
-app.use(express.json())
+app.use(express.json({ limit: '50mb' }));  // Increase JSON body size limit
+app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase URL-encoded body size limit
 app.use(cookieParser())
 app.use("/api", router)
 

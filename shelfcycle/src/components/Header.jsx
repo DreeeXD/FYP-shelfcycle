@@ -13,6 +13,8 @@ import { setUserDetails } from '../store/userSlice';
 const Header = () => {
   // const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const [profileMenu, setProfileMenu] = useState(false);
+
   const dispatch = useDispatch()
 
   const user = useSelector(state => state?.user?.user) //error to show if not available
@@ -57,33 +59,49 @@ const Header = () => {
           <span className="cursor-pointer hover:text-blue-500 transition">Exchanges</span>
           <span className="cursor-pointer hover:text-blue-500 transition">Chat</span>
         </div>
-          {/* User Dropdown */}
-          <div className="relative">
-            {
-              user?.uploadPic?(
-                <img src = {user?.uploadPic} className= 'w-10 h-10 rounded-full' alt={user?.name}/>
-              ):
-              (
-                <FiUser 
-                size={25} 
-                className="cursor-pointer hover:text-blue-500 transition"
-                // onClick={() => setDropdownOpen(!dropdownOpen)}
-            />
-              )
-            }
 
-            
-            {/* {dropdownOpen && ( 
-              // <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
-                // <ul className="py-2">
-                  // <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</li>
-                  // <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-t" onClick={() => alert("Logging out...")}>
-                    // Logout
-                  // </li>
-                // </ul>
-              // </div>
-            // )} */}
+
+          {/* User Dropdown */}
+          <div className='relative flex justify-center'>
+            <div className="relative" onClick={()=>setProfileMenu(preve => !preve)}>
+              {
+                user?.uploadPic?(
+                  <img src = {user?.uploadPic} className= 'w-10 h-10 rounded-full' alt={user?.name}/>
+                ):
+                (
+                  <FiUser 
+                  size={25} 
+                  className="cursor-pointer hover:text-blue-500 transition"
+                  // onClick={() => setDropdownOpen(!dropdownOpen)}
+              />
+                )
+              }
+
+              
+              {/* {dropdownOpen && ( 
+                // <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
+                  // <ul className="py-2">
+                    // <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</li>
+                    // <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-t" onClick={() => alert("Logging out.")}>
+                      // Logout
+                    // </li>
+                  // </ul>
+                // </div>
+              // )} */}
+
+              {
+                profileMenu && (
+                  <div className='absolute bg-white bottom-0 top-11 h-fit p-2 shadow-lg rounded-lg'>
+                    <nav>
+                      <Link to = {"user-profile"} className='whitespace-nowrap hover:bg-slate-50 p-2'>User Profile</Link>
+                    </nav>
+                  </div>
+                )
+              }
+            </div>
+                
           </div>
+          
 
           <div className='relative'>
             <span>
