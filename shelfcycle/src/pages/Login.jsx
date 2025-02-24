@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import SummaryAPI from "../common";
 import { toast } from "react-toastify";
+import Context from "../context";
 
 
 const Login = () => {
@@ -14,6 +15,8 @@ const Login = () => {
   });
 
   const navigate = useNavigate()
+  const { fetchUserDetails } = useContext(Context)
+
 
   const handleChange = (e) => {
     const {name, value} = e.target
@@ -42,6 +45,7 @@ const Login = () => {
     if(dataAPI.success){
       toast.success(dataAPI.message)
       navigate("/")
+      fetchUserDetails()
 
     }
     if(dataAPI.error){
@@ -102,7 +106,7 @@ const Login = () => {
 
         {/* Signup Link */}
         <p className="text-center text-gray-600 mt-4">
-          Don't have an account? 
+          Don't have an account?
           <Link to="/signup" className="text-blue-500 hover:underline hover:text-blue-700">
             Sign up
           </Link>

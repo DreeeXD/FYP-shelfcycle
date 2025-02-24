@@ -5,7 +5,12 @@ import Footer from './components/Footer'
 import { ToastContainer } from 'react-toastify';
 import SummaryAPI from './common';
 import { useEffect } from 'react';
+import Context from './context';
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from './store/userSlice';
 function App() {
+
+  const dispatch = useDispatch()
 
   const fetchUserDetails = async () => {
 
@@ -24,6 +29,10 @@ function App() {
 
     const dataAPI = await dataResponse.json()
 
+    if(dataAPI.success){
+      dispatch(setUserDetails(dataAPI.data))
+    }
+
     console.log("user data", dataResponse)
   }
 
@@ -34,12 +43,18 @@ function App() {
   }, [])
   return (
     <>
-      <ToastContainer />
-      <Header/>    
-      <main>
-      <Outlet/>
-      </main>
-      <Footer/>
+      <Context.Provider value = {{
+        fetchUserDetails //fetching user details
+      }}>
+
+        <ToastContainer />
+        <Header/>    
+        <main>
+          <Outlet/>
+        </main>
+        <Footer/>
+
+      </Context.Provider>
     </>
   )
 }
