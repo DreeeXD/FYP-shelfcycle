@@ -56,14 +56,16 @@ const Header = () => {
         {/* Navigation Links */}
         <div className="flex items-center gap-7 text-gray-700 relative">
         <div className="hidden lg:flex items-center gap-6 text-gray-700 font-medium">
-          <span className="cursor-pointer hover:text-blue-500 transition">Exchanges</span>
+          <span className="cursor-pointer hover:text-blue-500 transition">
+            <Link to={"exchanges"}>Exchanges </Link>
+          </span>
           <span className="cursor-pointer hover:text-blue-500 transition">Chat</span>
         </div>
 
 
           {/* User Dropdown */}
           <div className='relative flex justify-center'>
-            <div className="relative" onClick={()=>setProfileMenu(preve => !preve)}>
+            <div className="relative flex justify-center" onClick={()=>setProfileMenu(preve => !preve)}>
               {
                 user?.uploadPic?(
                   <img src = {user?.uploadPic} className= 'w-10 h-10 rounded-full' alt={user?.name}/>
