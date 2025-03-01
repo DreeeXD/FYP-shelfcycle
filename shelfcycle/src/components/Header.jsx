@@ -64,7 +64,20 @@ const Header = () => {
 
 
           {/* User Dropdown */}
+              {/* {dropdownOpen && ( 
+                // <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
+                  // <ul className="py-2">
+                    // <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</li>
+                    // <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-t" onClick={() => alert("Logging out.")}>
+                      // Logout
+                    // </li>
+                  // </ul>
+                // </div>
+              // )} */}
+
+
           <div className='relative flex justify-center'>
+
             <div className="relative flex justify-center" onClick={()=>setProfileMenu(preve => !preve)}>
               {
                 user?.uploadPic?(
@@ -78,18 +91,6 @@ const Header = () => {
               />
                 )
               }
-
-              
-              {/* {dropdownOpen && ( 
-                // <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
-                  // <ul className="py-2">
-                    // <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</li>
-                    // <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-t" onClick={() => alert("Logging out.")}>
-                      // Logout
-                    // </li>
-                  // </ul>
-                // </div>
-              // )} */}
 
               {
                 profileMenu && (

@@ -28,12 +28,14 @@ const UserProfile = () => {
                 
                 <nav className='mt-10 w-full text-center'>
                     <ul className='space-y-5 text-gray-700'>
-                        <li className='font-medium cursor-pointer hover:text-blue-500 transition'>
-                            <Link to={'user-settings'}>Settings</Link>
-                        </li>
+                        
 
                         <li className='font-medium cursor-pointer hover:text-blue-500 transition'>
                             <Link to={'user-orders'}>Orders</Link>
+                        </li>
+
+                        <li className='font-medium cursor-pointer hover:text-blue-500 transition'>
+                            <Link to={'user-settings'}>Settings</Link>
                         </li>
                     </ul>
                 </nav>

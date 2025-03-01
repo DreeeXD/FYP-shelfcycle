@@ -74,7 +74,7 @@ const SignUp = () => {
         //console.log("data", dataAPI)
 
       }else{
-        console.log("Please enter a matching password and try again.")
+        toast.error("Please enter a matching password and try again.")
       }
 
       

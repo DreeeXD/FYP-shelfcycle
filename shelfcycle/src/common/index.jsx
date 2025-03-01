@@ -18,6 +18,10 @@ const SummaryAPI = {
     logoutUser : {
         url : `${domainBackend}/api/logout`,
         method : "GET"
+    },
+    updateUser : {
+        url : `${domainBackend}/api/update-user`,
+        method : "POST"
     }
 }
 
