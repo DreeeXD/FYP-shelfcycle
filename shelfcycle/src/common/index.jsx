@@ -22,6 +22,14 @@ const SummaryAPI = {
     updateUser : {
         url : `${domainBackend}/api/update-user`,
         method : "POST"
+    },
+    uploadBook : {
+        url : `${domainBackend}/api/book-upload`,
+        method : "POST"
+    },
+    getBooks : {
+        url : `${domainBackend}/api/get-book`,
+        method : "GET"
     }
 }
 

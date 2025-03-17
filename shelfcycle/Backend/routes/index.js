@@ -8,6 +8,8 @@ const userDetailsController = require('../controller/userDetails')
 const authenticationToken = require('../middleware/authenticationToken')
 const LogoutUser = require('../controller/LogoutUser')
 const updateUser = require('../controller/updateUser')
+const uploadBookController = require('../controller/uploadBook')
+const getBooksController = require('../controller/getBooks')
 
 router.post("/signup", SignupUserController)
 router.post("/login", LoginUserController)
@@ -16,5 +18,10 @@ router.get("/logout", LogoutUser)
 
 
 router.post("/update-user", authenticationToken, updateUser)
+
+
+//book upload
+router.post("/book-upload", authenticationToken, uploadBookController)
+router.get("/get-book", getBooksController)
 
 module.exports = router

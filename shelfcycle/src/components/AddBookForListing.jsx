@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import uploadImage from "../helpers/uploadImage";
 import ImageDisplay from "./ImageDisplay";
+import { MdDeleteForever } from "react-icons/md";
+import SummaryAPI from "../common";
+import { toast } from 'react-toastify';
 
 const AddBookForListing = ({ onClose }) => {
   const [data, setData] = useState({
@@ -33,14 +36,12 @@ const AddBookForListing = ({ onClose }) => {
       const uploadedImages = await Promise.all(
         files.map(async (file) => {
           const uploadImageCloudinary = await uploadImage(file);
-          return uploadImageCloudinary.url;
+          setData((prevData) => ({
+            ...prevData,
+            bookImage: [...prevData.bookImage, uploadImageCloudinary.url],
+          }));
         })
       );
-
-      setData((prevData) => ({
-        ...prevData,
-        bookImage: [...prevData.bookImage, ...uploadedImages],
-      }));
 
       console.log("Uploaded Images:", uploadedImages);
     } catch (error) {
@@ -51,10 +52,47 @@ const AddBookForListing = ({ onClose }) => {
   };
 
 
-  const handleSubmit = (e) => {
+  const handleBookImageDelete = async(index) =>{
+    console.log("image index:", index)
+
+    const updatedBookImage = [...data.bookImage];
+    updatedBookImage.splice(index, 1); //splice to remove elements from the array 
+
+
+    setData((prevData) => ({
+      ...prevData,
+      bookImage: [...updatedBookImage],
+    }))
+  }
+
+  {/* Submit form*/}
+
+  const handleUploadBook = async (e) => {
     e.preventDefault();
-    console.log("Book Data Submitted:", data);
-  };
+    // console.log("Book Data Submitted:", data);
+    const response = await fetch(SummaryAPI.uploadBook.url,{
+      method: SummaryAPI.uploadBook.method,
+      credentials : 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    const responseData = await response.json()
+    
+    if(responseData.success){
+      toast.success(responseData?.message)
+      onClose()
+    }
+
+    if(responseData.error){
+      toast.error(responseData?.message)
+      
+    }
+
+  }
+
 
   return (
     <div className="absolute flex w-full h-full justify-center top-0 items-center bg-slate-100 bg-opacity-60 transition-all">
@@ -65,7 +103,7 @@ const AddBookForListing = ({ onClose }) => {
 
         <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">Add Book for Exchange</h2>
 
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-3" onSubmit={handleUploadBook}>
 
 
           {/* Book Title */}
@@ -104,7 +142,7 @@ const AddBookForListing = ({ onClose }) => {
               name="bookDescription"
               value={data.bookDescription}
               required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition focus:bg-blue-50"
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 h-20 focus:ring-blue-400 resize-none focus:outline-none transition focus:bg-blue-50"
               onChange={handleOnChange}
             />
           </div>
@@ -164,17 +202,28 @@ const AddBookForListing = ({ onClose }) => {
               onChange={handleUploadProduct}
             />
             {uploading && <p className="text-blue-500 text-sm mt-1">Uploading...</p>}
+
             <div className="flex flex-wrap gap-2 mt-2">
-              {data.bookImage.length > 0 && data.bookImage.map((image, index) => (
-                <img key={index} src={image}
+              {data.bookImage.length > 0 && 
+              data.bookImage.map((image, index) => 
+                (
+                <div key = {index} className="relative group">
+                <img key={index} 
+                src={image}
                 alt="Book" className="h-20 w-20 object-cover rounded-md border cursor-pointer" 
                 onClick={() => {
                 setOpenImageEnlarge(true);
                 setImageEnlarge(image);
                 }}
                   />
+                  <div className="absolute top-1 right-1 bg-blue-600 text-white p-1 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition duration-300" onClick={()=>handleBookImageDelete(index)}> 
+                  {/* callback function cause we need index^ to know which image to delete */}
+                  <MdDeleteForever />
+                  </div>
+                </div>
               ))}
             </div>
+            
           </div>
 
           {/* Submit Button */}
