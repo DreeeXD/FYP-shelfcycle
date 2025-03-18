@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types"; // Import PropTypes
 import { IoMdClose } from "react-icons/io";
 import uploadImage from "../helpers/uploadImage";
 import ImageDisplay from "./ImageDisplay";
@@ -7,36 +8,35 @@ import SummaryAPI from "../common";
 import { toast } from 'react-toastify';
 import { Navigate } from "react-router-dom";
 
-const AddBookForListing = ({ onClose }) => {
+const EditBook = ({
+  onClose,
+  bookData,
+}) => {
   const [data, setData] = useState({
-    bookTitle: "",
-    bookAuthor: "",
-    bookDescription: "",
-    bookCondition: "",
-    bookCategory: "",
-    bookPrice: "",
-    bookImage: [], 
+    bookTitle: bookData?.bookTitle,
+    bookAuthor: bookData?.bookAuthor,
+    bookDescription: bookData?.bookDescription,
+    bookCondition: bookData?.bookCondition,
+    bookCategory: bookData?.bookCategory,
+    bookPrice: bookData?.bookPrice,
+    bookImage: bookData?.bookImage || [], 
   });
 
   const [uploading, setUploading] = useState(false);
   const [openImageEnlarge, setOpenImageEnlarge] = useState(false);
   const [imageEnlarge, setImageEnlarge] = useState("");
 
-  
-
-
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
   };
-
 
   const handleUploadProduct = async (e) => {
     const files = Array.from(e.target.files); // Convert FileList to an array
     setUploading(true);
 
     try {
-      const uploadedImages = await Promise.all(
+      await Promise.all(
         files.map(async (file) => {
           const uploadImageCloudinary = await uploadImage(file);
           setData((prevData) => ({
@@ -45,8 +45,6 @@ const AddBookForListing = ({ onClose }) => {
           }));
         })
       );
-
-      console.log("Uploaded Images:", uploadedImages);
     } catch (error) {
       console.error("Error uploading images:", error);
     }
@@ -54,49 +52,39 @@ const AddBookForListing = ({ onClose }) => {
     setUploading(false);
   };
 
-
-  const handleBookImageDelete = async(index) =>{
-    console.log("image index:", index)
-
+  const handleBookImageDelete = async(index) => {
     const updatedBookImage = [...data.bookImage];
     updatedBookImage.splice(index, 1); //splice to remove elements from the array 
-
 
     setData((prevData) => ({
       ...prevData,
       bookImage: [...updatedBookImage],
-    }))
-  }
-
-  {/* Submit form*/}
+    }));
+  };
 
   const handleUploadBook = async (e) => {
     e.preventDefault();
-    // console.log("Book Data Submitted:", data);
-    const response = await fetch(SummaryAPI.uploadBook.url,{
+    const response = await fetch(SummaryAPI.uploadBook.url, {
       method: SummaryAPI.uploadBook.method,
-      credentials : 'include',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
     });
 
-    const responseData = await response.json()
+    const responseData = await response.json();
     
-    if(responseData.success){
-      toast.success(responseData?.message)
-      onClose()
-      Navigate("/exchanges")
+    if (responseData.success) {
+      toast.success(responseData?.message);
+      onClose();
+      Navigate("/exchanges");
     }
 
-    if(responseData.error){
-      toast.error(responseData?.message)
-      
+    if (responseData.error) {
+      toast.error(responseData?.message);
     }
-
-  }
-
+  };
 
   return (
     <div className="absolute flex w-full h-full justify-center top-0 items-center bg-slate-100 bg-opacity-60 transition-all">
@@ -105,11 +93,9 @@ const AddBookForListing = ({ onClose }) => {
           <IoMdClose size={24} />
         </button>
 
-        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">Add Book for Exchange</h2>
+        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">Edit Book Details</h2>
 
         <form className="flex flex-col gap-3" onSubmit={handleUploadBook}>
-
-
           {/* Book Title */}
           <div>
             <label htmlFor="bookTitle" className="block text-gray-700 text-sm font-medium mb-1">Book Title:</label>
@@ -209,25 +195,22 @@ const AddBookForListing = ({ onClose }) => {
 
             <div className="flex flex-wrap gap-2 mt-2">
               {data.bookImage.length > 0 && 
-              data.bookImage.map((image, index) => 
-                (
-                <div key = {index} className="relative group">
-                <img key={index} 
-                src={image}
-                alt="Book" className="h-20 w-20 object-cover rounded-md border cursor-pointer" 
-                onClick={() => {
-                setOpenImageEnlarge(true);
-                setImageEnlarge(image);
-                }}
+              data.bookImage.map((image, index) => (
+                <div key={index} className="relative group">
+                  <img 
+                    src={image}
+                    alt="Book" className="h-20 w-20 object-cover rounded-md border cursor-pointer" 
+                    onClick={() => {
+                      setOpenImageEnlarge(true);
+                      setImageEnlarge(image);
+                    }}
                   />
-                  <div className="absolute top-1 right-1 bg-blue-600 text-white p-1 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition duration-300" onClick={()=>handleBookImageDelete(index)}> 
-                  {/* callback function cause we need index^ to know which image to delete */}
-                  <MdDeleteForever />
+                  <div className="absolute top-1 right-1 bg-blue-600 text-white p-1 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition duration-300" onClick={() => handleBookImageDelete(index)}> 
+                    <MdDeleteForever />
                   </div>
                 </div>
               ))}
             </div>
-            
           </div>
 
           {/* Submit Button */}
@@ -241,18 +224,26 @@ const AddBookForListing = ({ onClose }) => {
         </form>
       </div>
 
-
-      {/*Display Fulll Image*/}
-      {
-        openImageEnlarge && (
-          <ImageDisplay onClose={()=> setOpenImageEnlarge(false)} ImageUrl={imageEnlarge}/>
-
-        )
-      }
-
-
+      {/* Display Full Image */}
+      {openImageEnlarge && (
+        <ImageDisplay onClose={() => setOpenImageEnlarge(false)} ImageUrl={imageEnlarge} />
+      )}
     </div>
   );
 };
 
-export default AddBookForListing;
+// Add PropTypes validation
+EditBook.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  bookData: PropTypes.shape({
+    bookTitle: PropTypes.string,
+    bookAuthor: PropTypes.string,
+    bookDescription: PropTypes.string,
+    bookCondition: PropTypes.string,
+    bookCategory: PropTypes.string,
+    bookPrice: PropTypes.number,
+    bookImage: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
+};
+
+export default EditBook;
