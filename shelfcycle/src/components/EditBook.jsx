@@ -1,30 +1,31 @@
 import { useState } from "react";
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types";
 import { IoMdClose } from "react-icons/io";
 import uploadImage from "../helpers/uploadImage";
 import ImageDisplay from "./ImageDisplay";
 import { MdDeleteForever } from "react-icons/md";
 import SummaryAPI from "../common";
 import { toast } from 'react-toastify';
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const EditBook = ({
-  onClose,
-  bookData,
-}) => {
+const EditBook = ({ onClose, bookData, onBookUpdated }) => {
   const [data, setData] = useState({
-    bookTitle: bookData?.bookTitle,
-    bookAuthor: bookData?.bookAuthor,
-    bookDescription: bookData?.bookDescription,
-    bookCondition: bookData?.bookCondition,
-    bookCategory: bookData?.bookCategory,
-    bookPrice: bookData?.bookPrice,
-    bookImage: bookData?.bookImage || [], 
+    _id: bookData?._id || "",
+    bookTitle: bookData?.bookTitle || "",
+    bookAuthor: bookData?.bookAuthor || "",
+    bookDescription: bookData?.bookDescription || "",
+    bookCondition: bookData?.bookCondition || "",
+    bookCategory: bookData?.bookCategory || "",
+    bookPrice: bookData?.bookPrice || "",
+    bookImage: bookData?.bookImage || [],
+    bookType: bookData?.bookType || "exchange",
   });
 
   const [uploading, setUploading] = useState(false);
   const [openImageEnlarge, setOpenImageEnlarge] = useState(false);
   const [imageEnlarge, setImageEnlarge] = useState("");
+
+  const navigate = useNavigate();
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -32,7 +33,7 @@ const EditBook = ({
   };
 
   const handleUploadProduct = async (e) => {
-    const files = Array.from(e.target.files); // Convert FileList to an array
+    const files = Array.from(e.target.files);
     setUploading(true);
 
     try {
@@ -52,33 +53,35 @@ const EditBook = ({
     setUploading(false);
   };
 
-  const handleBookImageDelete = async(index) => {
+  const handleBookImageDelete = (index) => {
     const updatedBookImage = [...data.bookImage];
-    updatedBookImage.splice(index, 1); //splice to remove elements from the array 
-
+    updatedBookImage.splice(index, 1);
     setData((prevData) => ({
       ...prevData,
-      bookImage: [...updatedBookImage],
+      bookImage: updatedBookImage,
     }));
   };
 
   const handleUploadBook = async (e) => {
     e.preventDefault();
-    const response = await fetch(SummaryAPI.uploadBook.url, {
-      method: SummaryAPI.uploadBook.method,
+    console.log("Submitting book update...");
+
+    const response = await fetch(SummaryAPI.updateBook.url, {
+      method: SummaryAPI.updateBook.method,
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
 
     const responseData = await response.json();
-    
+
     if (responseData.success) {
       toast.success(responseData?.message);
+      onBookUpdated?.()
       onClose();
-      Navigate("/exchanges");
+      navigate("/exchanges");
     }
 
     if (responseData.error) {
@@ -96,116 +99,148 @@ const EditBook = ({
         <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">Edit Book Details</h2>
 
         <form className="flex flex-col gap-3" onSubmit={handleUploadBook}>
+          {/* Book Type Radio Buttons */}
+          <div>
+            <p className="text-gray-700 font-medium mb-1">Is this book for exchange or sale?</p>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="bookType"
+                  value="exchange"
+                  checked={data.bookType === "exchange"}
+                  onChange={handleOnChange}
+                />
+                Exchange
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="bookType"
+                  value="sell"
+                  checked={data.bookType === "sell"}
+                  onChange={handleOnChange}
+                />
+                Sell
+              </label>
+            </div>
+          </div>
+
           {/* Book Title */}
           <div>
-            <label htmlFor="bookTitle" className="block text-gray-700 text-sm font-medium mb-1">Book Title:</label>
+            <label htmlFor="bookTitle" className="block text-sm font-medium mb-1">Book Title:</label>
             <input
               type="text"
               id="bookTitle"
               name="bookTitle"
               value={data.bookTitle}
               required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition focus:bg-blue-50"
+              className="w-full p-2 border border-gray-300 rounded-md"
               onChange={handleOnChange}
             />
           </div>
 
           {/* Book Author */}
           <div>
-            <label htmlFor="bookAuthor" className="block text-gray-700 text-sm font-medium mb-1">Book Author:</label>
+            <label htmlFor="bookAuthor" className="block text-sm font-medium mb-1">Book Author:</label>
             <input
               type="text"
               id="bookAuthor"
               name="bookAuthor"
               value={data.bookAuthor}
               required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition focus:bg-blue-50"
+              className="w-full p-2 border border-gray-300 rounded-md"
               onChange={handleOnChange}
             />
           </div>
 
-          {/* Book Description */}
+          {/* Description */}
           <div>
-            <label htmlFor="bookDescription" className="block text-gray-700 text-sm font-medium mb-1">Book Description:</label>
+            <label htmlFor="bookDescription" className="block text-sm font-medium mb-1">Description:</label>
             <textarea
               id="bookDescription"
               name="bookDescription"
               value={data.bookDescription}
               required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 h-20 focus:ring-blue-400 resize-none focus:outline-none transition focus:bg-blue-50"
+              className="w-full p-2 border border-gray-300 rounded-md h-20 resize-none"
               onChange={handleOnChange}
             />
           </div>
 
-          {/* Book Condition */}
+          {/* Condition */}
           <div>
-            <label htmlFor="bookCondition" className="block text-gray-700 text-sm font-medium mb-1">Book Condition:</label>
+            <label htmlFor="bookCondition" className="block text-sm font-medium mb-1">Condition:</label>
             <input
               type="text"
               id="bookCondition"
               name="bookCondition"
               value={data.bookCondition}
               required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition focus:bg-blue-50"
+              className="w-full p-2 border border-gray-300 rounded-md"
               onChange={handleOnChange}
             />
           </div>
 
-          {/* Book Category */}
+          {/* Category */}
           <div>
-            <label htmlFor="bookCategory" className="block text-gray-700 text-sm font-medium mb-1">Book Category:</label>
+            <label htmlFor="bookCategory" className="block text-sm font-medium mb-1">Category:</label>
             <input
               type="text"
               id="bookCategory"
               name="bookCategory"
               value={data.bookCategory}
               required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition focus:bg-blue-50"
+              className="w-full p-2 border border-gray-300 rounded-md"
               onChange={handleOnChange}
             />
           </div>
 
-          {/* Book Price */}
-          <div>
-            <label htmlFor="bookPrice" className="block text-gray-700 text-sm font-medium mb-1">Book Price:</label>
-            <input
-              type="number"
-              id="bookPrice"
-              name="bookPrice"
-              value={data.bookPrice}
-              required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition focus:bg-blue-50"
-              onChange={handleOnChange}
-            />
-          </div>
+          {/* Price (conditionally shown) */}
+          {data.bookType === "sell" && (
+            <div>
+              <label htmlFor="bookPrice" className="block text-sm font-medium mb-1">Price ($):</label>
+              <input
+                type="number"
+                id="bookPrice"
+                name="bookPrice"
+                value={data.bookPrice}
+                className="w-full p-2 border border-gray-300 rounded-md"
+                onChange={handleOnChange}
+                required
+              />
+            </div>
+          )}
 
-          {/* Book Image Upload */}
+          {/* Image Upload */}
           <div>
-            <label htmlFor="bookImage" className="block text-gray-700 text-sm font-medium mb-1">Book Images:</label>
+            <label htmlFor="bookImage" className="block text-sm font-medium mb-1">Book Images:</label>
             <input
               type="file"
               id="bookImage"
               name="bookImage"
               accept="image/*"
-              multiple 
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition focus:bg-blue-50"
+              multiple
+              className="w-full p-2 border border-gray-300 rounded-md"
               onChange={handleUploadProduct}
             />
             {uploading && <p className="text-blue-500 text-sm mt-1">Uploading...</p>}
 
             <div className="flex flex-wrap gap-2 mt-2">
-              {data.bookImage.length > 0 && 
-              data.bookImage.map((image, index) => (
+              {data.bookImage.map((image, index) => (
                 <div key={index} className="relative group">
-                  <img 
+                  <img
                     src={image}
-                    alt="Book" className="h-20 w-20 object-cover rounded-md border cursor-pointer" 
+                    alt="Book"
+                    className="h-20 w-20 object-cover rounded-md border cursor-pointer"
                     onClick={() => {
                       setOpenImageEnlarge(true);
                       setImageEnlarge(image);
                     }}
                   />
-                  <div className="absolute top-1 right-1 bg-blue-600 text-white p-1 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition duration-300" onClick={() => handleBookImageDelete(index)}> 
+                  <div
+                    className="absolute top-1 right-1 bg-blue-600 text-white p-1 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition duration-300"
+                    onClick={() => handleBookImageDelete(index)}
+                  >
                     <MdDeleteForever />
                   </div>
                 </div>
@@ -224,7 +259,6 @@ const EditBook = ({
         </form>
       </div>
 
-      {/* Display Full Image */}
       {openImageEnlarge && (
         <ImageDisplay onClose={() => setOpenImageEnlarge(false)} ImageUrl={imageEnlarge} />
       )}
@@ -232,10 +266,10 @@ const EditBook = ({
   );
 };
 
-// Add PropTypes validation
 EditBook.propTypes = {
   onClose: PropTypes.func.isRequired,
   bookData: PropTypes.shape({
+    _id: PropTypes.string,
     bookTitle: PropTypes.string,
     bookAuthor: PropTypes.string,
     bookDescription: PropTypes.string,
@@ -243,6 +277,7 @@ EditBook.propTypes = {
     bookCategory: PropTypes.string,
     bookPrice: PropTypes.number,
     bookImage: PropTypes.arrayOf(PropTypes.string),
+    bookType: PropTypes.oneOf(["exchange", "sell"]),
   }).isRequired,
 };
 

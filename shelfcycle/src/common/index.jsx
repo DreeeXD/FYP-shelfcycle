@@ -30,7 +30,11 @@ const SummaryAPI = {
     getBooks : {
         url : `${domainBackend}/api/get-book`,
         method : "GET"
-    }
+    },
+    updateBook: {
+        url: `${domainBackend}/api/book/update`, 
+        method: "PUT"
+      }
 }
 
 export default SummaryAPI;
