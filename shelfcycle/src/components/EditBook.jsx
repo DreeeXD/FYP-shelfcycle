@@ -254,7 +254,7 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
             className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300 font-semibold text-lg"
             disabled={uploading}
           >
-            {uploading ? "Uploading..." : "Submit"}
+            {uploading ? "Updating..." : "Update"}
           </button>
         </form>
       </div>

@@ -25,6 +25,6 @@ router.post("/update-user", authenticationToken, updateUser)
 router.post("/book-upload", authenticationToken, uploadBookController)
 router.get("/get-book", getBooksController)
 
-router.put("/book/update", updateBookController);
+router.put("/book/update", authenticationToken, updateBookController);
 
 module.exports = router

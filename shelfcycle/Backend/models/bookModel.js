@@ -6,6 +6,11 @@ const bookSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
+  uploadedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   bookAuthor: {
     type: String,
     required: true,
