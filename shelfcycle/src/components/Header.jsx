@@ -59,7 +59,9 @@ const Header = () => {
           <span className="cursor-pointer hover:text-blue-500 transition">
             <Link to={"exchanges"}>Exchanges </Link>
           </span>
-          <span className="cursor-pointer hover:text-blue-500 transition">Chat</span>
+          <span className="cursor-pointer hover:text-blue-500 transition">
+            <Link to={"chat"}>Chat</Link>
+            </span>
         </div>
 
 
