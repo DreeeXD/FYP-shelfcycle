@@ -2,7 +2,9 @@ const bookModel = require("../models/bookModel");
 
 async function uploadBookController(request, response) {
   try {
-    const { bookType, bookPrice, ...rest } = request.body;
+    const { bookType, bookPrice, ...rest } = request.body; // Include uploadedBy
+
+  
 
     // Validate bookType
     if (!["exchange", "sell"].includes(bookType)) {
