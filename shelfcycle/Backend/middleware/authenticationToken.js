@@ -1,51 +1,61 @@
 const jwt = require('jsonwebtoken');
+const userModel = require('../models/userModel'); // ✅ Make sure path is correct
 
-async function authenticationToken(request, response, next){ 
-    try{
-        const token = request.cookies?.token
+async function authenticationToken(req, res, next) {
+  try {
+    const token = req.cookies?.token;
 
-        if(!token){
-            return response.status(200).json({
-                message : "Please login.",
-                error : true,
-                success : false
-            })
+    if (!token) {
+      return res.status(401).json({
+        message: "Please login.",
+        error: true,
+        success: false,
+      });
+    }
+
+    jwt.verify(token, process.env.Secret_Token_Key, async (error, decoded) => {
+      if (error || !decoded?._id) {
+        console.log("JWT verification error:", error);
+        return res.status(401).json({
+          message: "Invalid or expired token.",
+          error: true,
+          success: false,
+        });
+      }
+
+      // ✅ Fetch user from DB
+      try {
+        const user = await userModel.findById(decoded._id).select("_id username email");
+
+        if (!user) {
+          return res.status(401).json({
+            message: "User not found.",
+            error: true,
+            success: false,
+          });
         }
 
-        jwt.verify(token, process.env.Secret_Token_Key, function(error, decoded) {
-            console.log(error)
-            console.log("decoded", decoded) 
+        req.user = user; // ✅ Attach full user to request
+        next();
 
-            // console.log("token   -", token)
+      } catch (dbErr) {
+        console.error("Error fetching user from DB:", dbErr);
+        return res.status(500).json({
+          message: "Internal server error while validating user.",
+          error: true,
+          success: false,
+        });
+      }
+    });
 
-            
-            if(error){
-                console.log("Authentication error:", error)
-            }
-
-            request.userID = decoded?._id
-            next(); //passing it to the next controller
-
-          });
-
-
-        
-
-
-        
-
-
-
-    }catch (error){
-        response.status(401).json({
-            message: error.message || error,
-            data : [],
-            error: true,
-            success: false 
-        })
-
-    }
+  } catch (err) {
+    console.error("Unexpected auth middleware error:", err);
+    res.status(500).json({
+      message: "Authentication failed.",
+      error: true,
+      success: false,
+    });
+  }
 }
-
 
 module.exports = authenticationToken;

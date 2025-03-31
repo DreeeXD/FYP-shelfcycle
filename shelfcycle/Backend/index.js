@@ -23,5 +23,5 @@ connectDB().then(() => {
         console.log('Connected to MongoDB')
         console.log(`Server is running at ${PORT}`)
     })
-})
+})      
 

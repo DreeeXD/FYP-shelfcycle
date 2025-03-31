@@ -41,7 +41,7 @@ const Exchanges = () => {
 
       {/* Header */}
       <div className="px-6 py-5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white flex justify-between items-center shadow-lg">
-        <h1 className="font-bold text-2xl tracking-wide">📚 Book Exchange Platform</h1>
+        <h1 className="font-bold text-2xl tracking-wide">Book Exchange Platform</h1>
         <button
           className="bg-white text-blue-700 font-semibold py-2 px-5 rounded-lg shadow-md hover:bg-blue-700 hover:text-white transition duration-300"
           onClick={() => setOpenAddBookListing(true)}
@@ -52,7 +52,7 @@ const Exchanges = () => {
 
       {/* Exchange Section */}
       <section className="px-6 py-6 bg-white shadow-inner rounded-md my-6 mx-4 md:mx-12">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">📦 Available for Exchange</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">Available for Exchange</h2>
         <div className="flex flex-wrap justify-center gap-8">
           {exchangeBooks.length > 0 ? (
             exchangeBooks.map((book, index) => (
@@ -66,7 +66,7 @@ const Exchanges = () => {
 
       {/* Sale Section */}
       <section className="px-6 py-6 bg-white shadow-inner rounded-md my-6 mx-4 md:mx-12">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">💰 Available for Sale</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">Available for Sale</h2>
         <div className="flex flex-wrap justify-center gap-8">
           {saleBooks.length > 0 ? (
             saleBooks.map((book, index) => (

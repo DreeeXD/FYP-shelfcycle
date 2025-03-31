@@ -1,30 +1,40 @@
-const express = require('express')
+const express = require('express');
 
-const router = express.Router()
+const router = express.Router();
 
-const SignupUserController = require('../controller/SignupUser')
-const LoginUserController = require('../controller/LoginUser')
-const userDetailsController = require('../controller/userDetails')
-const authenticationToken = require('../middleware/authenticationToken')
-const LogoutUser = require('../controller/LogoutUser')
-const updateUser = require('../controller/updateUser')
-const uploadBookController = require('../controller/uploadBook')
-const getBooksController = require('../controller/getBooks')
-const updateBookController = require('../controller/updateBook')
+// Controllers
+const SignupUserController = require('../controller/SignupUser');
+const LoginUserController = require('../controller/LoginUser');
+const userDetailsController = require('../controller/userDetails');
+const LogoutUser = require('../controller/LogoutUser');
+const updateUser = require('../controller/updateUser');
+const uploadBookController = require('../controller/uploadBook');
+const getBooksController = require('../controller/getBooks');
+const updateBookController = require('../controller/updateBook');
 
-router.post("/signup", SignupUserController)
-router.post("/login", LoginUserController)
-router.get("/user-details", authenticationToken, userDetailsController)
-router.get("/logout", LogoutUser)
+// Middleware
+const authenticationToken = require('../middleware/authenticationToken');
 
+// Routes
+const messageRoutes = require('./messageRoutes');
+const userRoutes = require('./userRoutes'); 
+// Auth routes
+router.post('/signup', SignupUserController);
+router.post('/login', LoginUserController);
+router.get('/user-details', authenticationToken, userDetailsController);
+router.get('/logout', LogoutUser);
 
-router.post("/update-user", authenticationToken, updateUser)
+// User-related
+router.post('/update-user', authenticationToken, updateUser);
 
+// Book-related
+router.post('/book-upload', authenticationToken, uploadBookController);
+router.get('/get-book', getBooksController);
+router.put('/book/update', authenticationToken, updateBookController);
 
-//book upload
-router.post("/book-upload", authenticationToken, uploadBookController)
-router.get("/get-book", getBooksController)
+// Chat-related
+router.use('/messages', messageRoutes);
 
-router.put("/book/update", authenticationToken, updateBookController);
+router.use('/users', userRoutes);
 
-module.exports = router
+module.exports = router;

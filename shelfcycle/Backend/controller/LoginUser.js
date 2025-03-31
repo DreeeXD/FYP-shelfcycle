@@ -25,24 +25,33 @@ async function LoginUserController(request, response) {
 
         console.log("Check Password", checkPassword)
 
-        if (checkPassword){
-            const tokenData = {
-                _id : user._id,
-                email: user.email,
-            }
-
-            const token = await jwt.sign(tokenData, process.env.Secret_Token_Key, { expiresIn: '8h' });
+        if (checkPassword) {
+            const tokenPayload = {
+              _id: user._id.toString(),
+              email: user.email,
+            };
+          
+              
+            const token = jwt.sign(tokenPayload, process.env.Secret_Token_Key, { expiresIn: '8h' });
             const tokenOption = {
                 httpOnly: true,
-                secure: true
-            }
+                secure: false, 
+                sameSite: "Lax",
+                maxAge: 8 * 60 * 60 * 1000, // 8 hours
+              };
+
+              console.log("Generated Token Payload:", tokenPayload);
 
             response.cookie("token", token, tokenOption).json({
                 message: "Login successful",
-                data: token,
                 success: true,
-                error: false
-            })
+                error: false,
+                user: {
+                  _id: user._id,
+                  email: user.email,
+                  username: user.username,
+                }
+              });
 
 
 

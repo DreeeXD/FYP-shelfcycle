@@ -44,8 +44,8 @@ const Login = () => {
 
     if(dataAPI.success){
       toast.success(dataAPI.message)
-      navigate("/")
       fetchUserDetails()
+      navigate("/")
 
     }
     if(dataAPI.error){
