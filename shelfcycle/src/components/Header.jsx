@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import Logo from '../assets/Logo.jpg';
 import { FcSearch } from "react-icons/fc";
 import { FiUser } from "react-icons/fi";
-import { BsCart } from "react-icons/bs";
+import { CiBoxList } from "react-icons/ci";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -110,7 +110,7 @@ const Header = () => {
 
           <div className='relative'>
             <span>
-              <BsCart size={22} className="cursor-pointer hover:text-blue-500 transition" />
+              <CiBoxList size={22} className="cursor-pointer hover:text-blue-500 transition" />
             </span>
             <div className='bg-blue-500 text-white w-5 h-5 p-1 flex items-center justify-center rounded-full absolute -top-2 -right-2'>
               <p className='text-sm'>0</p>

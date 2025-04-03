@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { FaPaperPlane, FaCommentDots } from 'react-icons/fa';
+import { FaPaperPlane } from 'react-icons/fa';
 import SummaryAPI from '../common';
 
 const ChatPage = () => {
@@ -10,7 +10,7 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [currentMsg, setCurrentMsg] = useState('');
 
-  // ✅ Fetch all users except self
+  // Fetch users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -25,11 +25,10 @@ const ChatPage = () => {
         console.error('Error fetching users:', err);
       }
     };
-
     if (user?._id) fetchUsers();
   }, [user]);
 
-  // ✅ Poll messages for selected user
+  // Fetch messages
   useEffect(() => {
     const fetchMessages = async () => {
       if (!selectedUser) return;
@@ -50,9 +49,8 @@ const ChatPage = () => {
     return () => clearInterval(interval);
   }, [selectedUser]);
 
-  // ✅ Send a message
   const handleSend = async () => {
-    if (currentMsg.trim() === '' || !selectedUser) return;
+    if (!currentMsg.trim() || !selectedUser) return;
 
     const newMsg = {
       receiver: selectedUser._id,
@@ -85,7 +83,6 @@ const ChatPage = () => {
     }
   };
 
-  //user is not logged in
   if (!user) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -94,74 +91,109 @@ const ChatPage = () => {
     );
   }
 
-  //Main UI
   return (
-    <div className="flex h-[calc(100vh-100px)] bg-gray-100 rounded-md overflow-hidden">
+    <div className="flex h-[calc(100vh-100px)] bg-gray-50 rounded overflow-hidden shadow-md border">
+      
       {/* Sidebar */}
-      <div className="w-1/4 bg-blue-50 p-4 border-r border-gray-300">
-        <div className="text-xl font-bold text-center mb-4">Chats</div>
-        <div className="space-y-3 overflow-y-auto max-h-[80vh]">
-          {allUsers.length === 0 && (
-            <p className="text-gray-500 text-sm text-center">No users to chat with.</p>
-          )}
-          {allUsers.map((u) => (
+      <div className="w-1/4 bg-white border-r overflow-y-auto p-4 space-y-2">
+        <h2 className="text-xl font-semibold mb-4 px-2">Chats</h2>
+        {allUsers.length === 0 ? (
+          <p className="text-sm text-gray-500 px-2">No users to chat with.</p>
+        ) : (
+          allUsers.map((u) => (
             <div
               key={u._id}
               onClick={() => setSelectedUser(u)}
-              className={`cursor-pointer p-3 rounded-md shadow-md hover:bg-blue-100 transition ${
-                selectedUser?._id === u._id ? 'bg-blue-200' : 'bg-white'
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition hover:bg-blue-100 ${
+                selectedUser?._id === u._id ? 'bg-blue-200' : ''
               }`}
             >
-              <p className="font-medium text-gray-800">{u.username}</p>
+              {u?.uploadPic?.startsWith('data:image') ? (
+                <img
+                  src={u.uploadPic}
+                  alt={u.username}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center font-bold uppercase">
+                  {u.username[0]}
+                </div>
+              )}
+              <span className="text-gray-800 font-medium">{u.username}</span>
             </div>
-          ))}
-        </div>
-        <div className="flex justify-center mt-6">
-          <FaCommentDots className="text-blue-500" size={28} />
-        </div>
+          ))
+        )}
       </div>
 
-      {/* Chat window */}
+      {/* Chat Area */}
       <div className="w-3/4 flex flex-col">
-        <div className="bg-gray-800 text-white px-6 py-3 text-lg font-medium">
-          {selectedUser ? `${selectedUser.username}` : 'Select a user to start chatting'}
+        {/* Header */}
+        <div className="bg-white shadow px-6 py-4 border-b flex items-center gap-3">
+          {selectedUser ? (
+            <>
+              {selectedUser?.uploadPic?.startsWith('data:image') ? (
+                <img
+                  src={selectedUser.uploadPic}
+                  alt={selectedUser.username}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center font-bold uppercase">
+                  {selectedUser.username[0]}
+                </div>
+              )}
+              <h2 className="text-lg font-semibold text-gray-800">
+                {selectedUser.username}
+              </h2>
+            </>
+          ) : (
+            <h2 className="text-lg text-gray-500">Select a user to start chatting</h2>
+          )}
         </div>
 
-        <div className="flex-1 px-6 py-4 bg-gray-200 overflow-y-auto space-y-3">
+        {/* Chat Messages */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-gray-100">
           {selectedUser && messages.length === 0 && (
-            <p className="text-gray-500 text-sm text-center mt-4">No messages yet.</p>
+            <p className="text-sm text-center text-gray-500">No messages yet.</p>
           )}
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`w-fit max-w-[70%] p-3 rounded-xl shadow-md text-sm ${
-                msg.sender === user._id
-                  ? 'ml-auto bg-blue-500 text-white'
-                  : 'mr-auto bg-white text-gray-800'
+              className={`flex ${
+                msg.sender === user._id ? 'justify-end' : 'justify-start'
               }`}
             >
-              {msg.text}
-              <div className="text-[10px] text-right text-gray-300 mt-1">
-                {new Date(msg.timestamp || Date.now()).toLocaleTimeString()}
+              <div
+                className={`rounded-2xl px-4 py-2 text-sm max-w-xs shadow ${
+                  msg.sender === user._id
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-white text-gray-800'
+                }`}
+              >
+                <p>{msg.text}</p>
+                <p className="text-[10px] mt-1 text-right text-gray-300">
+                  {new Date(msg.timestamp || Date.now()).toLocaleTimeString()}
+                </p>
               </div>
             </div>
           ))}
         </div>
 
+        {/* Input */}
         {selectedUser && (
-          <div className="bg-gray-800 px-4 py-3">
-            <div className="flex items-center bg-white px-4 py-2 rounded-full shadow-md focus-within:ring-2 ring-blue-400">
+          <div className="p-4 border-t bg-white">
+            <div className="flex items-center bg-gray-100 px-4 py-2 rounded-full">
               <input
                 type="text"
                 placeholder="Type a message..."
-                className="flex-1 outline-none text-sm text-gray-700"
                 value={currentMsg}
                 onChange={(e) => setCurrentMsg(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                className="flex-1 bg-transparent outline-none text-sm px-2"
               />
               <button
                 onClick={handleSend}
-                className="ml-3 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition"
+                className="text-white bg-blue-500 hover:bg-blue-600 p-2 rounded-full"
               >
                 <FaPaperPlane size={16} />
               </button>
