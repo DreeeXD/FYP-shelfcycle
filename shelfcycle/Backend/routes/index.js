@@ -18,6 +18,7 @@ const authenticationToken = require('../middleware/authenticationToken');
 // Routes
 const messageRoutes = require('./messageRoutes');
 const userRoutes = require('./userRoutes'); 
+const GoogleAuthLogin = require('../controller/googleAuthLogin');
 // Auth routes
 router.post('/signup', SignupUserController);
 router.post('/login', LoginUserController);
@@ -25,7 +26,10 @@ router.get('/user-details', authenticationToken, userDetailsController);
 router.get('/logout', LogoutUser);
 
 // User-related
-router.post('/update-user', authenticationToken, updateUser);
+router.put('/update-user', authenticationToken, updateUser);
+
+
+router.post('/google-auth', GoogleAuthLogin)
 
 // Book-related
 router.post('/book-upload', authenticationToken, uploadBookController);
@@ -38,3 +42,5 @@ router.use('/messages', messageRoutes);
 router.use('/users', userRoutes);
 
 module.exports = router;
+
+

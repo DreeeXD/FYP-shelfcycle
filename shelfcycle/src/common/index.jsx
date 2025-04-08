@@ -19,10 +19,14 @@ const SummaryAPI = {
   },
   updateUser: {
     url: `${domainBackend}/api/update-user`,
+    method: "PUT",
+  },
+  googleLogin: {
+    url: `${domainBackend}/api/google-auth`,
     method: "POST",
   },
 
-  //Book routes
+  // Book routes
   uploadBook: {
     url: `${domainBackend}/api/book-upload`,
     method: "POST",
@@ -36,7 +40,7 @@ const SummaryAPI = {
     method: "PUT",
   },
 
-  //Chat-related routes
+  // Chat-related routes
   getUsers: {
     url: `${domainBackend}/api/users`,
     method: "GET",
