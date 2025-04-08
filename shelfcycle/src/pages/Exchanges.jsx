@@ -119,7 +119,7 @@ const BookCard = ({ book, onEdit }) => {
       {/* Image */}
       <div className="w-full flex justify-center mt-4">
         <img
-          src={book?.bookImage?.[0] || "https://via.placeholder.com/150"}
+          src={book?.bookImage?.[0]}
           alt={book.bookTitle || "Book Image"}
           className="w-44 h-56 object-cover rounded-md border shadow-sm"
         />

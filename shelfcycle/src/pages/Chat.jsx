@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { FaPaperPlane } from 'react-icons/fa';
 import SummaryAPI from '../common';
@@ -9,8 +9,8 @@ const ChatPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [currentMsg, setCurrentMsg] = useState('');
+  const chatEndRef = useRef(null);
 
-  // Fetch users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -28,7 +28,6 @@ const ChatPage = () => {
     if (user?._id) fetchUsers();
   }, [user]);
 
-  // Fetch messages
   useEffect(() => {
     const fetchMessages = async () => {
       if (!selectedUser) return;
@@ -39,6 +38,7 @@ const ChatPage = () => {
         });
         const data = await res.json();
         setMessages(data);
+        scrollToBottom();
       } catch (err) {
         console.error('Error fetching messages:', err);
       }
@@ -48,6 +48,14 @@ const ChatPage = () => {
     const interval = setInterval(fetchMessages, 3000);
     return () => clearInterval(interval);
   }, [selectedUser]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const handleSend = async () => {
     if (!currentMsg.trim() || !selectedUser) return;
@@ -93,10 +101,8 @@ const ChatPage = () => {
 
   return (
     <div className="flex h-[calc(100vh-100px)] bg-gray-50 rounded overflow-hidden shadow-md border">
-      
-      {/* Sidebar */}
-      <div className="w-1/4 bg-white border-r overflow-y-auto p-4 space-y-2">
-        <h2 className="text-xl font-semibold mb-4 px-2">Chats</h2>
+      <div className="w-1/4 bg-white border-r overflow-y-auto p-4 space-y-3">
+        <h2 className="text-xl font-bold text-gray-800 mb-6 px-2">Chats</h2>
         {allUsers.length === 0 ? (
           <p className="text-sm text-gray-500 px-2">No users to chat with.</p>
         ) : (
@@ -104,7 +110,7 @@ const ChatPage = () => {
             <div
               key={u._id}
               onClick={() => setSelectedUser(u)}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition hover:bg-blue-100 ${
+              className={`relative flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition hover:bg-blue-100 ${
                 selectedUser?._id === u._id ? 'bg-blue-200' : ''
               }`}
             >
@@ -115,11 +121,11 @@ const ChatPage = () => {
                   className="w-10 h-10 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center font-bold uppercase">
+                <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold uppercase">
                   {u.username[0]}
                 </div>
               )}
-              <span className="text-gray-800 font-medium">{u.username}</span>
+              <span className="text-gray-800 font-medium truncate">{u.username}</span>
             </div>
           ))
         )}
@@ -127,7 +133,6 @@ const ChatPage = () => {
 
       {/* Chat Area */}
       <div className="w-3/4 flex flex-col">
-        {/* Header */}
         <div className="bg-white shadow px-6 py-4 border-b flex items-center gap-3">
           {selectedUser ? (
             <>
@@ -138,11 +143,11 @@ const ChatPage = () => {
                   className="w-10 h-10 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center font-bold uppercase">
+                <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold uppercase">
                   {selectedUser.username[0]}
                 </div>
               )}
-              <h2 className="text-lg font-semibold text-gray-800">
+              <h2 className="text-xl font-semibold text-gray-800">
                 {selectedUser.username}
               </h2>
             </>
@@ -151,8 +156,7 @@ const ChatPage = () => {
           )}
         </div>
 
-        {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-gray-100">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-100 scroll-smooth">
           {selectedUser && messages.length === 0 && (
             <p className="text-sm text-center text-gray-500">No messages yet.</p>
           )}
@@ -171,15 +175,15 @@ const ChatPage = () => {
                 }`}
               >
                 <p>{msg.text}</p>
-                <p className="text-[10px] mt-1 text-right text-gray-300">
+                <p className="text-[10px] mt-1 text-right text-gray-400">
                   {new Date(msg.timestamp || Date.now()).toLocaleTimeString()}
                 </p>
               </div>
             </div>
           ))}
+          <div ref={chatEndRef} />
         </div>
 
-        {/* Input */}
         {selectedUser && (
           <div className="p-4 border-t bg-white">
             <div className="flex items-center bg-gray-100 px-4 py-2 rounded-full">
