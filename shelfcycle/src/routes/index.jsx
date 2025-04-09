@@ -7,8 +7,8 @@ import SignUp from "../pages/SignUp.jsx"
 import Exchanges from "../pages/Exchanges.jsx"
 import UserProfile from "../pages/UserProfile.jsx"
 import UserSettings from "../pages/UserSettings.jsx"
-import UserOrders from "../pages/UserOrders.jsx"
 import ChatBox from "../pages/Chat.jsx"
+import UserUploads from "../pages/UserUploads.jsx"
 
 const router = createBrowserRouter([
     {
@@ -48,8 +48,8 @@ const router = createBrowserRouter([
                         element: <UserSettings/>
                     },
                     {
-                        path: "user-orders",
-                        element: <UserOrders/>
+                        path: "user-uploads",
+                        element: <UserUploads/>
                     }
                 ]
             }

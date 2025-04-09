@@ -23,7 +23,7 @@ async function authenticationToken(req, res, next) {
         });
       }
 
-      // ✅ Fetch user from DB
+      // Fetch user from DB
       try {
         const user = await userModel.findById(decoded._id).select("_id username email");
 
@@ -35,7 +35,7 @@ async function authenticationToken(req, res, next) {
           });
         }
 
-        req.user = user; // ✅ Attach full user to request
+        req.user = user; // Attach full user to request
         next();
 
       } catch (dbErr) {

@@ -1,3 +1,4 @@
+
 const domainBackend = "http://localhost:8081";
 
 const SummaryAPI = {
@@ -25,6 +26,10 @@ const SummaryAPI = {
     url: `${domainBackend}/api/google-auth`,
     method: "POST",
   },
+  changePassword: {
+    url: `${domainBackend}/api/change-password`,
+    method: "POST",
+  },
 
   // Book routes
   uploadBook: {
@@ -38,6 +43,14 @@ const SummaryAPI = {
   updateBook: {
     url: `${domainBackend}/api/book/update`,
     method: "PUT",
+  },
+  myUploads: {
+    url: `${domainBackend}/api/my-uploads`,
+    method: "GET",
+  },
+  deleteBook: {
+    url: `${domainBackend}/api/book`,
+    method: "DELETE",
   },
 
   // Chat-related routes

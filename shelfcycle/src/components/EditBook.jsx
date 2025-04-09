@@ -5,7 +5,7 @@ import uploadImage from "../helpers/uploadImage";
 import ImageDisplay from "./ImageDisplay";
 import { MdDeleteForever } from "react-icons/md";
 import SummaryAPI from "../common";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const EditBook = ({ onClose, bookData, onBookUpdated }) => {
@@ -24,18 +24,16 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
   const [uploading, setUploading] = useState(false);
   const [openImageEnlarge, setOpenImageEnlarge] = useState(false);
   const [imageEnlarge, setImageEnlarge] = useState("");
-
   const navigate = useNavigate();
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
-    setData((prevData) => ({ ...prevData, [name]: value }));
+    setData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleUploadProduct = async (e) => {
     const files = Array.from(e.target.files);
     setUploading(true);
-
     try {
       await Promise.all(
         files.map(async (file) => {
@@ -46,64 +44,60 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
           }));
         })
       );
-    } catch (error) {
-      console.error("Error uploading images:", error);
+    } catch (err) {
+      console.error("Image upload error", err);
     }
-
     setUploading(false);
   };
 
   const handleBookImageDelete = (index) => {
-    const updatedBookImage = [...data.bookImage];
-    updatedBookImage.splice(index, 1);
-    setData((prevData) => ({
-      ...prevData,
-      bookImage: updatedBookImage,
-    }));
+    const updated = [...data.bookImage];
+    updated.splice(index, 1);
+    setData((prev) => ({ ...prev, bookImage: updated }));
   };
 
   const handleUploadBook = async (e) => {
     e.preventDefault();
-    console.log("Submitting book update...");
 
-    const response = await fetch(SummaryAPI.updateBook.url, {
+    const res = await fetch(SummaryAPI.updateBook.url, {
       method: SummaryAPI.updateBook.method,
-      credentials: 'include',
+      credentials: "include",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
 
-    const responseData = await response.json();
+    const result = await res.json();
 
-    if (responseData.success) {
-      toast.success(responseData?.message);
-      onBookUpdated?.()
+    if (result.success) {
+      toast.success(result.message);
+      onBookUpdated?.();
       onClose();
-      navigate("/exchanges");
-    }
-
-    if (responseData.error) {
-      toast.error(responseData?.message);
+      navigate("/user-profile/user-uploads/");
+    } else {
+      toast.error(result.message);
     }
   };
 
   return (
-    <div className="absolute flex w-full h-full justify-center top-0 items-center bg-slate-100 bg-opacity-60 transition-all">
-      <div className="relative bg-white p-5 rounded-lg w-full max-w-2xl max-h-[90%] shadow-lg overflow-auto">
-        <button className="absolute top-3 right-3 text-gray-600 hover:text-blue-700 transition duration-300" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-40 backdrop-blur-sm px-4 py-8 overflow-auto">
+      <div className="relative bg-white p-6 rounded-lg w-full max-w-2xl shadow-lg animate-fadeIn">
+        <button
+          className="absolute top-3 right-3 text-gray-600 hover:text-red-500 transition"
+          onClick={onClose}
+        >
           <IoMdClose size={24} />
         </button>
 
-        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">Edit Book Details</h2>
+        <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">Edit Book Details</h2>
 
-        <form className="flex flex-col gap-3" onSubmit={handleUploadBook}>
-          {/* Book Type Radio Buttons */}
+        <form className="flex flex-col gap-4" onSubmit={handleUploadBook}>
+          {/* Book Type */}
           <div>
-            <p className="text-gray-700 font-medium mb-1">Is this book for exchange or sale?</p>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700 block mb-1">Book Type</label>
+            <div className="flex gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
                   name="bookType"
@@ -113,7 +107,7 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
                 />
                 Exchange
               </label>
-              <label className="flex items-center gap-2">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
                   name="bookType"
@@ -126,86 +120,55 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
             </div>
           </div>
 
-          {/* Book Title */}
-          <div>
-            <label htmlFor="bookTitle" className="block text-sm font-medium mb-1">Book Title:</label>
-            <input
-              type="text"
-              id="bookTitle"
-              name="bookTitle"
-              value={data.bookTitle}
-              required
-              className="w-full p-2 border border-gray-300 rounded-md"
-              onChange={handleOnChange}
-            />
-          </div>
-
-          {/* Book Author */}
-          <div>
-            <label htmlFor="bookAuthor" className="block text-sm font-medium mb-1">Book Author:</label>
-            <input
-              type="text"
-              id="bookAuthor"
-              name="bookAuthor"
-              value={data.bookAuthor}
-              required
-              className="w-full p-2 border border-gray-300 rounded-md"
-              onChange={handleOnChange}
-            />
-          </div>
+          {[
+            { id: "bookTitle", label: "Title" },
+            { id: "bookAuthor", label: "Author" },
+            { id: "bookCondition", label: "Condition" },
+            { id: "bookCategory", label: "Category" },
+          ].map(({ id, label }) => (
+            <div key={id}>
+              <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+                {label}
+              </label>
+              <input
+                id={id}
+                name={id}
+                value={data[id]}
+                required
+                onChange={handleOnChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+          ))}
 
           {/* Description */}
           <div>
-            <label htmlFor="bookDescription" className="block text-sm font-medium mb-1">Description:</label>
+            <label htmlFor="bookDescription" className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
             <textarea
               id="bookDescription"
               name="bookDescription"
               value={data.bookDescription}
               required
-              className="w-full p-2 border border-gray-300 rounded-md h-20 resize-none"
               onChange={handleOnChange}
+              className="w-full p-2 border rounded-md resize-none h-24"
             />
           </div>
 
-          {/* Condition */}
-          <div>
-            <label htmlFor="bookCondition" className="block text-sm font-medium mb-1">Condition:</label>
-            <input
-              type="text"
-              id="bookCondition"
-              name="bookCondition"
-              value={data.bookCondition}
-              required
-              className="w-full p-2 border border-gray-300 rounded-md"
-              onChange={handleOnChange}
-            />
-          </div>
-
-          {/* Category */}
-          <div>
-            <label htmlFor="bookCategory" className="block text-sm font-medium mb-1">Category:</label>
-            <input
-              type="text"
-              id="bookCategory"
-              name="bookCategory"
-              value={data.bookCategory}
-              required
-              className="w-full p-2 border border-gray-300 rounded-md"
-              onChange={handleOnChange}
-            />
-          </div>
-
-          {/* Price (conditionally shown) */}
+          {/* Price */}
           {data.bookType === "sell" && (
             <div>
-              <label htmlFor="bookPrice" className="block text-sm font-medium mb-1">Price ($):</label>
+              <label htmlFor="bookPrice" className="block text-sm font-medium text-gray-700 mb-1">
+                Price ($)
+              </label>
               <input
                 type="number"
                 id="bookPrice"
                 name="bookPrice"
                 value={data.bookPrice}
-                className="w-full p-2 border border-gray-300 rounded-md"
                 onChange={handleOnChange}
+                className="w-full p-2 border rounded-md"
                 required
               />
             </div>
@@ -213,33 +176,30 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
 
           {/* Image Upload */}
           <div>
-            <label htmlFor="bookImage" className="block text-sm font-medium mb-1">Book Images:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Images</label>
             <input
               type="file"
-              id="bookImage"
-              name="bookImage"
-              accept="image/*"
               multiple
-              className="w-full p-2 border border-gray-300 rounded-md"
+              accept="image/*"
               onChange={handleUploadProduct}
+              className="w-full text-sm p-2 border rounded-md"
             />
             {uploading && <p className="text-blue-500 text-sm mt-1">Uploading...</p>}
-
-            <div className="flex flex-wrap gap-2 mt-2">
-              {data.bookImage.map((image, index) => (
-                <div key={index} className="relative group">
+            <div className="flex gap-3 flex-wrap mt-2">
+              {data.bookImage.map((img, i) => (
+                <div key={i} className="relative group">
                   <img
-                    src={image}
+                    src={img}
                     alt="Book"
-                    className="h-20 w-20 object-cover rounded-md border cursor-pointer"
                     onClick={() => {
                       setOpenImageEnlarge(true);
-                      setImageEnlarge(image);
+                      setImageEnlarge(img);
                     }}
+                    className="h-20 w-20 object-cover rounded-md border cursor-pointer"
                   />
                   <div
-                    className="absolute top-1 right-1 bg-blue-600 text-white p-1 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition duration-300"
-                    onClick={() => handleBookImageDelete(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition"
+                    onClick={() => handleBookImageDelete(i)}
                   >
                     <MdDeleteForever />
                   </div>
@@ -251,8 +211,8 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300 font-semibold text-lg"
             disabled={uploading}
+            className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition"
           >
             {uploading ? "Updating..." : "Update"}
           </button>
@@ -279,6 +239,7 @@ EditBook.propTypes = {
     bookImage: PropTypes.arrayOf(PropTypes.string),
     bookType: PropTypes.oneOf(["exchange", "sell"]),
   }).isRequired,
+  onBookUpdated: PropTypes.func.isRequired,
 };
 
 export default EditBook;

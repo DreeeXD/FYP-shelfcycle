@@ -1,52 +1,41 @@
-const bookModel = require("../models/bookModel");
+const bookModel = require('../models/bookModel'); // ✅ This must be at the top
 
-async function uploadBookController(request, response) {
+const uploadBookController = async (req, res) => {
   try {
-    const { bookType, bookPrice, ...rest } = request.body; // Include uploadedBy
+    const { bookType, bookPrice, ...rest } = req.body;
 
-  
-
-    // Validate bookType
-    if (!["exchange", "sell"].includes(bookType)) {
-      return response.status(400).json({
-        message: "Invalid book type. Must be 'exchange' or 'sell'.",
-        error: true,
+    const uploadedBy = req.user?._id;
+    if (!uploadedBy) {
+      return res.status(401).json({
+        message: "Unauthorized. User not logged in.",
         success: false,
+        error: true,
       });
     }
 
-    // Handle price logic
-    let finalBookData = {
+    const finalBookData = {
       ...rest,
+      uploadedBy,
       bookType,
-      bookPrice: bookType === "sell" ? bookPrice : null,
+      bookPrice: bookType === 'sell' ? bookPrice : null,
     };
 
-    // If it's a sale, price must be present and valid
-    if (bookType === "sell" && (!bookPrice || isNaN(bookPrice))) {
-      return response.status(400).json({
-        message: "Please provide a valid price for selling the book.",
-        error: true,
-        success: false,
-      });
-    }
-
     const uploadBook = new bookModel(finalBookData);
-    const saveProduct = await uploadBook.save();
+    const savedBook = await uploadBook.save();
 
-    response.status(201).json({
-      data: saveProduct,
+    res.status(201).json({
+      data: savedBook,
       success: true,
       error: false,
       message: "Book uploaded successfully!",
     });
   } catch (error) {
-    response.status(400).json({
+    res.status(400).json({
       message: error.message || error,
       error: true,
       success: false,
     });
   }
-}
+};
 
 module.exports = uploadBookController;

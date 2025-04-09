@@ -19,6 +19,11 @@ const authenticationToken = require('../middleware/authenticationToken');
 const messageRoutes = require('./messageRoutes');
 const userRoutes = require('./userRoutes'); 
 const GoogleAuthLogin = require('../controller/googleAuthLogin');
+const changePassword = require('../controller/changePassword');
+const getUserBooks = require('../controller/getUserBooks');
+const deleteBook = require('../controller/deleteBook');
+
+
 // Auth routes
 router.post('/signup', SignupUserController);
 router.post('/login', LoginUserController);
@@ -27,6 +32,7 @@ router.get('/logout', LogoutUser);
 
 // User-related
 router.put('/update-user', authenticationToken, updateUser);
+router.post('/change-password', authenticationToken, changePassword);
 
 
 router.post('/google-auth', GoogleAuthLogin)
@@ -35,6 +41,8 @@ router.post('/google-auth', GoogleAuthLogin)
 router.post('/book-upload', authenticationToken, uploadBookController);
 router.get('/get-book', getBooksController);
 router.put('/book/update', authenticationToken, updateBookController);
+router.get('/my-uploads', authenticationToken, getUserBooks);
+router.delete('/book/:id', authenticationToken, deleteBook);
 
 // Chat-related
 router.use('/messages', messageRoutes);

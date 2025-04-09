@@ -31,7 +31,7 @@ const UserProfile = () => {
                         
 
                         <li className='font-medium cursor-pointer hover:text-blue-500 transition'>
-                            <Link to={'user-orders'}>Orders</Link>
+                            <Link to={'user-uploads'}>My Uploads</Link>
                         </li>
 
                         <li className='font-medium cursor-pointer hover:text-blue-500 transition'>
