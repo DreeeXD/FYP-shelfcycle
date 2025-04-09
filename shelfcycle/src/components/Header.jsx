@@ -14,7 +14,9 @@ const Header = () => {
   const [profileMenu, setProfileMenu] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector(state => state?.user?.user);
+
+  const user = useSelector((state) => state?.user?.user);
+  const wishlistItems = useSelector((state) => state?.wishlist?.items || []);
 
   const handleLogout = async () => {
     try {
@@ -41,7 +43,7 @@ const Header = () => {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between px-6 h-16">
-        
+
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <img src={Logo} alt="Logo" className="h-10 w-auto object-contain" />
@@ -57,18 +59,18 @@ const Header = () => {
           <FcSearch size={20} />
         </div>
 
-        {/* Navigation + User Area */}
+        {/* Navigation + User Actions */}
         <div className="flex items-center gap-6 text-gray-700 relative">
-          
+
           {/* Nav Links */}
           <div className="hidden lg:flex items-center gap-5 text-sm font-medium">
             <Link to="/exchanges" className="hover:text-blue-600 transition">Exchanges</Link>
             <Link to="/chat" className="hover:text-blue-600 transition">Chat</Link>
           </div>
 
-          {/* User Icon / Profile Pic */}
+          {/* User Profile Icon */}
           <div className="relative">
-            <div onClick={() => setProfileMenu(prev => !prev)} className="cursor-pointer">
+            <div onClick={() => setProfileMenu((prev) => !prev)} className="cursor-pointer">
               {user?.uploadPic ? (
                 <img
                   src={user.uploadPic}
@@ -80,7 +82,6 @@ const Header = () => {
               )}
             </div>
 
-            {/* Dropdown Menu */}
             {profileMenu && (
               <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-md border z-50">
                 <Link
@@ -94,15 +95,17 @@ const Header = () => {
             )}
           </div>
 
-          {/* Books List Icon */}
-          <div className="relative cursor-pointer hover:text-blue-500 transition">
+          {/* Wishlist Icon with Count */}
+          <Link to="/wishlist" className="relative cursor-pointer hover:text-blue-500 transition">
             <CiBoxList size={22} />
-            <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
-              0
-            </div>
-          </div>
+            {wishlistItems.length > 0 && (
+              <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
+                {wishlistItems.length}
+              </div>
+            )}
+          </Link>
 
-          {/* Notification Icon */}
+          {/* Notifications */}
           <div className="relative cursor-pointer hover:text-blue-500 transition">
             <IoIosNotificationsOutline size={26} />
             <div className="absolute -top-2 -right-1 bg-blue-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
@@ -110,7 +113,7 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Login/Logout Button */}
+          {/* Login/Logout */}
           <div>
             {user?._id ? (
               <button

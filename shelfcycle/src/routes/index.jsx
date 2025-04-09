@@ -9,6 +9,7 @@ import UserProfile from "../pages/UserProfile.jsx"
 import UserSettings from "../pages/UserSettings.jsx"
 import ChatBox from "../pages/Chat.jsx"
 import UserUploads from "../pages/UserUploads.jsx"
+import Wishlist from "../pages/Wishlist.jsx"
 
 const router = createBrowserRouter([
     {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
             {
                 path: "chat",
                 element: <ChatBox />
+            },
+            {
+                path: "wishlist",
+                element: <Wishlist/>
             },
             {
                 path: "user-profile",

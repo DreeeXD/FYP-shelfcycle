@@ -22,6 +22,7 @@ const GoogleAuthLogin = require('../controller/googleAuthLogin');
 const changePassword = require('../controller/changePassword');
 const getUserBooks = require('../controller/getUserBooks');
 const deleteBook = require('../controller/deleteBook');
+const { toggleWishlist, getUserWishlist } = require('../controller/addBookToWishlist');
 
 
 // Auth routes
@@ -49,6 +50,9 @@ router.use('/messages', messageRoutes);
 
 router.use('/users', userRoutes);
 
+//wishlist related
+router.get('/wishlist', authenticationToken, getUserWishlist);
+router.post('/wishlist', authenticationToken, toggleWishlist);
 module.exports = router;
 
 

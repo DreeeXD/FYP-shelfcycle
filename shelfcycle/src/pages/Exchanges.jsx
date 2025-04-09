@@ -2,6 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import AddBookForListing from '../components/AddBookForListing';
 import SummaryAPI from '../common';
 import PropTypes from 'prop-types';
+import { FaHeart } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { setWishlist, toggleWishlistItem } from '../store/wishlistSlice';
 
 const Exchanges = () => {
   const [openAddBookListing, setOpenAddBookListing] = useState(false);
@@ -12,6 +16,8 @@ const Exchanges = () => {
   const [exchangeSort, setExchangeSort] = useState('newest');
   const [saleSort, setSaleSort] = useState('newest');
 
+  const wishlist = useSelector(state => state.wishlist.items || []);
+  const dispatch = useDispatch();
   const exchangeRef = useRef(null);
   const saleRef = useRef(null);
 
@@ -22,12 +28,44 @@ const Exchanges = () => {
       setAllBooks(dataResponse?.data || []);
     };
 
+    const fetchWishlist = async () => {
+      const res = await fetch(SummaryAPI.wishlistFetch.url, {
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (data.success) {
+        dispatch(setWishlist(data.data.map(item => item.book._id)));
+      }
+    };
+
     fetchAllBooks();
-  }, [isBookAdded]);
+    fetchWishlist();
+  }, [isBookAdded, dispatch]);
 
   const handleBookAdded = () => {
     setIsBookAdded(!isBookAdded);
     setOpenAddBookListing(false);
+  };
+
+  const handleAddToWishlist = async (bookId) => {
+    try {
+      const res = await fetch(SummaryAPI.toggleWishlist.url, {
+        method: SummaryAPI.toggleWishlist.method,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ bookId }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        dispatch(toggleWishlistItem(bookId));
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      toast.error("Failed to update wishlist");
+    }
   };
 
   const sortBooks = (books, method) => {
@@ -44,125 +82,47 @@ const Exchanges = () => {
     }
   };
 
-  const exchangeBooks = sortBooks(
-    allBooks.filter(book => book.bookType === 'exchange'),
-    exchangeSort
-  );
-
-  const saleBooks = sortBooks(
-    allBooks.filter(book => book.bookType === 'sell'),
-    saleSort
-  );
-
-  const getMaxHeight = (showMore, totalItems) => {
-    const itemHeight = 500; // Approx card height
-    const itemsPerRow = 4;
-    const visibleRows = Math.ceil((showMore ? totalItems : 4) / itemsPerRow);
-    const paddingBuffer = 60; // Add padding to avoid cut-off
-    return `${visibleRows * itemHeight + paddingBuffer}px`;
-  };
+  const exchangeBooks = sortBooks(allBooks.filter(book => book.bookType === 'exchange'), exchangeSort);
+  const saleBooks = sortBooks(allBooks.filter(book => book.bookType === 'sell'), saleSort);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
-     {/* Header */}
-<header className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg px-4 md:px-8 py-4">
-  <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-    {/* Title */}
-    <h1 className="text-2xl font-bold tracking-wide text-center sm:text-left">
-      Book Exchange Platform
-    </h1>
-
-    {/* Add Book Button */}
-        <button
-          onClick={() => setOpenAddBookListing(true)}
-          className="bg-white text-blue-700 font-semibold px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 hover:text-white transition-all duration-300"
-        >
-          + Add Book
-        </button>
-      </div>
-  </header>
-
-      {/* Exchange Section */}
-      <section className="px-6 py-6 bg-white shadow-inner rounded-md my-6 mx-4 md:mx-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Available for Exchange</h2>
-          <select
-            value={exchangeSort}
-            onChange={(e) => setExchangeSort(e.target.value)}
-            className="border rounded-md px-3 py-1 shadow text-sm"
+      <header className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg px-4 md:px-8 py-4">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+          <h1 className="text-2xl font-bold tracking-wide text-center sm:text-left">Book Exchange Platform</h1>
+          <button
+            onClick={() => setOpenAddBookListing(true)}
+            className="bg-white text-blue-700 font-semibold px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 hover:text-white transition-all duration-300"
           >
-            <option value="newest">Sort: Newest</option>
-            <option value="oldest">Sort: Oldest</option>
-            <option value="title_asc">Sort: Title A-Z</option>
-            <option value="title_desc">Sort: Title Z-A</option>
-          </select>
+            + Add Book
+          </button>
         </div>
+      </header>
 
-        <div
-          ref={exchangeRef}
-          className="transition-all duration-700 ease-in-out overflow-hidden"
-          style={{ maxHeight: getMaxHeight(showMoreExchange, exchangeBooks.length) }}
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {(showMoreExchange ? exchangeBooks : exchangeBooks.slice(0, 4)).map((book, index) => (
-              <BookCard key={index} book={book} />
-            ))}
-          </div>
-        </div>
+      <BookSection
+        title="Available for Exchange"
+        sort={exchangeSort}
+        setSort={setExchangeSort}
+        books={exchangeBooks}
+        showMore={showMoreExchange}
+        setShowMore={setShowMoreExchange}
+        refValue={exchangeRef}
+        onWishlist={handleAddToWishlist}
+        wishlist={wishlist}
+      />
 
-        {exchangeBooks.length > 4 && (
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={() => setShowMoreExchange(prev => !prev)}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 shadow"
-            >
-              {showMoreExchange ? 'Show Less' : 'View More'}
-            </button>
-          </div>
-        )}
-      </section>
+      <BookSection
+        title="Available for Sale"
+        sort={saleSort}
+        setSort={setSaleSort}
+        books={saleBooks}
+        showMore={showMoreSale}
+        setShowMore={setShowMoreSale}
+        refValue={saleRef}
+        onWishlist={handleAddToWishlist}
+        wishlist={wishlist}
+      />
 
-      {/* Sale Section */}
-      <section className="px-6 py-6 bg-white shadow-inner rounded-md my-6 mx-4 md:mx-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Available for Sale</h2>
-          <select
-            value={saleSort}
-            onChange={(e) => setSaleSort(e.target.value)}
-            className="border rounded-md px-3 py-1 shadow text-sm"
-          >
-            <option value="newest">Sort: Newest</option>
-            <option value="oldest">Sort: Oldest</option>
-            <option value="title_asc">Sort: Title A-Z</option>
-            <option value="title_desc">Sort: Title Z-A</option>
-          </select>
-        </div>
-
-        <div
-          ref={saleRef}
-          className="transition-all duration-700 ease-in-out overflow-hidden"
-          style={{ maxHeight: getMaxHeight(showMoreSale, saleBooks.length) }}
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {(showMoreSale ? saleBooks : saleBooks.slice(0, 4)).map((book, index) => (
-              <BookCard key={index} book={book} />
-            ))}
-          </div>
-        </div>
-
-        {saleBooks.length > 4 && (
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={() => setShowMoreSale(prev => !prev)}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 shadow"
-            >
-              {showMoreSale ? 'Show Less' : 'View More'}
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* Add Book Modal */}
       {openAddBookListing && (
         <AddBookForListing
           onClose={() => setOpenAddBookListing(false)}
@@ -173,9 +133,78 @@ const Exchanges = () => {
   );
 };
 
-const BookCard = ({ book }) => {
+// ============================
+
+const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refValue, onWishlist, wishlist }) => {
+  const getMaxHeight = (showMore, totalItems) => {
+    const itemHeight = 500;
+    const itemsPerRow = 4;
+    const visibleRows = Math.ceil((showMore ? totalItems : 4) / itemsPerRow);
+    return `${visibleRows * itemHeight + 60}px`;
+  };
+
+  return (
+    <section className="px-6 py-6 bg-white shadow-inner rounded-md my-6 mx-4 md:mx-12">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="border rounded-md px-3 py-1 shadow text-sm"
+        >
+          <option value="newest">Sort: Newest</option>
+          <option value="oldest">Sort: Oldest</option>
+          <option value="title_asc">Sort: Title A-Z</option>
+          <option value="title_desc">Sort: Title Z-A</option>
+        </select>
+      </div>
+
+      <div
+        ref={refValue}
+        className="transition-all duration-700 ease-in-out overflow-hidden"
+        style={{ maxHeight: getMaxHeight(showMore, books.length) }}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+          {(showMore ? books : books.slice(0, 4)).map((book) => (
+            <BookCard
+              key={book._id}
+              book={book}
+              onWishlist={onWishlist}
+              isWishlisted={wishlist.includes(book._id)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {books.length > 4 && (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => setShowMore(prev => !prev)}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 shadow"
+          >
+            {showMore ? 'Show Less' : 'View More'}
+          </button>
+        </div>
+      )}
+    </section>
+  );
+};
+
+// ============================
+
+const BookCard = ({ book, onWishlist, isWishlisted }) => {
   return (
     <div className="relative w-full flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 p-4 hover:scale-[1.02] duration-300 ease-in-out">
+      <button
+        title="Add to Wishlist"
+        onClick={() => onWishlist(book._id)}
+        className={`absolute top-2 left-2 text-xl transition ${
+          isWishlisted ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
+        }`}
+      >
+        <FaHeart />
+      </button>
+
       <div className={`absolute top-2 right-2 px-3 py-1 text-xs rounded-full font-medium drop-shadow ${
         book.bookType === 'sell' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'
       }`}>
@@ -201,15 +230,24 @@ const BookCard = ({ book }) => {
   );
 };
 
+// ============================
+
 BookCard.propTypes = {
-  book: PropTypes.shape({
-    bookTitle: PropTypes.string.isRequired,
-    bookAuthor: PropTypes.string.isRequired,
-    bookType: PropTypes.oneOf(['sell', 'exchange']).isRequired,
-    bookPrice: PropTypes.number,
-    bookImage: PropTypes.arrayOf(PropTypes.string),
-    createdAt: PropTypes.string
-  }).isRequired,
+  book: PropTypes.object.isRequired,
+  onWishlist: PropTypes.func.isRequired,
+  isWishlisted: PropTypes.bool.isRequired,
+};
+
+BookSection.propTypes = {
+  title: PropTypes.string.isRequired,
+  sort: PropTypes.string.isRequired,
+  setSort: PropTypes.func.isRequired,
+  books: PropTypes.arrayOf(PropTypes.object).isRequired,
+  showMore: PropTypes.bool.isRequired,
+  setShowMore: PropTypes.func.isRequired,
+  refValue: PropTypes.object.isRequired,
+  onWishlist: PropTypes.func.isRequired,
+  wishlist: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default Exchanges;

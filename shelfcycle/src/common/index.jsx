@@ -52,6 +52,14 @@ const SummaryAPI = {
     url: `${domainBackend}/api/book`,
     method: "DELETE",
   },
+  wishlistFetch: {
+    url: `${domainBackend}/api/wishlist`,
+    method: "GET",
+  },
+  toggleWishlist: {
+    url: `${domainBackend}/api/wishlist`,
+    method: "POST",
+  },
 
   // Chat-related routes
   getUsers: {
