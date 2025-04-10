@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FiSave, FiKey } from 'react-icons/fi';
+import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserDetails } from '../store/userSlice';
 import { toast } from 'react-toastify';
@@ -9,6 +10,7 @@ import imgToBase64 from '../helpers/imgToBase64';
 const UserSettings = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.user?.user);
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -18,6 +20,12 @@ const UserSettings = () => {
     oldPassword: '',
     newPassword: '',
     confirmPassword: '',
+  });
+
+  const [showPassword, setShowPassword] = useState({
+    old: false,
+    new: false,
+    confirm: false,
   });
 
   useEffect(() => {
@@ -123,6 +131,7 @@ const UserSettings = () => {
           newPassword: formData.newPassword,
         }),
       });
+
       const data = await res.json();
 
       if (data.success) toast.success("Password changed successfully!");
@@ -196,31 +205,31 @@ const UserSettings = () => {
       {/* Password Change Section */}
       <hr className="my-8" />
       <h3 className="text-lg font-semibold mb-4 text-center">Change Password</h3>
-      <div className="grid grid-cols-1 gap-4">
-        <input
-          type="password"
-          name="oldPassword"
-          placeholder="Current Password"
-          value={formData.oldPassword}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400"
-        />
-        <input
-          type="password"
-          name="newPassword"
-          placeholder="New Password"
-          value={formData.newPassword}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400"
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm New Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400"
-        />
+      <div className="grid grid-cols-1 gap-4 relative">
+        {['oldPassword', 'newPassword', 'confirmPassword'].map((field, idx) => (
+          <div key={field} className="relative">
+            <input
+              type={showPassword[field] ? 'text' : 'password'}
+              name={field}
+              placeholder={
+                field === 'oldPassword'
+                  ? 'Current Password'
+                  : field === 'newPassword'
+                  ? 'New Password'
+                  : 'Confirm New Password'
+              }
+              value={formData[field]}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400 pr-10"
+            />
+            <span
+              className="absolute right-3 top-3.5 text-gray-500 hover:text-gray-700 cursor-pointer"
+              onClick={() => setShowPassword(prev => ({ ...prev, [field]: !prev[field] }))}
+            >
+              {showPassword[field] ? <IoMdEyeOff size={20} /> : <IoMdEye size={20} />}
+            </span>
+          </div>
+        ))}
       </div>
 
       <div className="flex justify-center mt-4">

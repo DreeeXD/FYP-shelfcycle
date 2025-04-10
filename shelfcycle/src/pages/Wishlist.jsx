@@ -19,7 +19,7 @@ const Wishlist = () => {
       if (data.success) {
         setWishlistBooks(data.data.map((item) => item.book));
       } else {
-        toast.error("Failed to load wishlist");
+        toast.error("Login to load wishlist");
       }
     } catch (err) {
       toast.error("Something went wrong!");
@@ -106,7 +106,7 @@ const Wishlist = () => {
                   <h2 className="font-semibold text-lg text-gray-900 truncate">{book.bookTitle}</h2>
                   <p className="text-sm text-gray-600 truncate">by {book.bookAuthor}</p>
                   {book.bookType === "sell" && (
-                    <p className="text-md font-bold text-blue-600 mt-2">₹ {book.bookPrice}</p>
+                    <p className="text-md font-bold text-blue-600 mt-2">$ {book.bookPrice}</p>
                   )}
                 </div>
               </div>
