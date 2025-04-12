@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import AddBookForListing from '../components/AddBookForListing';
 import SummaryAPI from '../common';
 import PropTypes from 'prop-types';
-import { FaHeart } from 'react-icons/fa';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { setWishlist, toggleWishlistItem } from '../store/wishlistSlice';
+import { Link } from 'react-router-dom';
 
 const Exchanges = () => {
   const [openAddBookListing, setOpenAddBookListing] = useState(false);
@@ -194,38 +195,46 @@ const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refVa
 
 const BookCard = ({ book, onWishlist, isWishlisted }) => {
   return (
-    <div className="relative w-full flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 p-4 hover:scale-[1.02] duration-300 ease-in-out">
-      <button
-        title="Add to Wishlist"
-        onClick={() => onWishlist(book._id)}
-        className={`absolute top-2 left-2 text-xl transition ${
-          isWishlisted ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
-        }`}
+    <div className="relative w-full">
+      <Link
+        to={`/book-details/${book._id}`}
+        className="block w-full bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 p-4 hover:scale-[1.02] duration-300 ease-in-out"
       >
-        <FaHeart />
-      </button>
+        <div className={`absolute top-2 right-2 px-3 py-1 text-xs rounded-full font-medium drop-shadow ${
+          book.bookType === 'sell' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'
+        }`}>
+          {book.bookType === 'sell' ? 'For Sale' : 'For Exchange'}
+        </div>
 
-      <div className={`absolute top-2 right-2 px-3 py-1 text-xs rounded-full font-medium drop-shadow ${
-        book.bookType === 'sell' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'
-      }`}>
-        {book.bookType === 'sell' ? 'For Sale' : 'For Exchange'}
-      </div>
+        <div className="w-full flex justify-center mt-4">
+          <img
+            src={book?.bookImage?.[0]}
+            alt={book.bookTitle || 'Book Image'}
+            className="w-44 h-56 object-cover rounded-md border shadow-sm"
+          />
+        </div>
 
-      <div className="w-full flex justify-center mt-4">
-        <img
-          src={book?.bookImage?.[0]}
-          alt={book.bookTitle || 'Book Image'}
-          className="w-44 h-56 object-cover rounded-md border shadow-sm"
-        />
-      </div>
+        <div className="mt-4 px-2 flex flex-col gap-1 text-center">
+          <h2 className="font-semibold text-lg text-gray-900 truncate">{book.bookTitle}</h2>
+          <p className="text-sm text-gray-600 truncate">by {book.bookAuthor}</p>
+          {book.bookType === 'sell' && (
+            <p className="text-md font-bold text-blue-600 mt-2">$ {book.bookPrice}</p>
+          )}
+        </div>
+      </Link>
 
-      <div className="mt-4 px-2 flex flex-col gap-1 text-center">
-        <h2 className="font-semibold text-lg text-gray-900 truncate">{book.bookTitle}</h2>
-        <p className="text-sm text-gray-600 truncate">by {book.bookAuthor}</p>
-        {book.bookType === 'sell' && (
-          <p className="text-md font-bold text-blue-600 mt-2">$ {book.bookPrice}</p>
+      {/* Wishlist button (placed outside the link to avoid nested navigation) */}
+      <button
+        title="Toggle Wishlist"
+        onClick={() => onWishlist(book._id)}
+        className="absolute top-2 left-2 text-xl z-10 transition"
+          >
+        {isWishlisted ? (
+          <FaHeart className="text-red-500" />
+        ) : (
+          <FaRegHeart className="text-gray-400 hover:text-red-500" />
         )}
-      </div>
+    </button>
     </div>
   );
 };

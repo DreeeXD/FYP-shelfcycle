@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Logo from '../assets/Logo.jpg';
-import { FcSearch } from "react-icons/fc";
+import { CiSearch } from "react-icons/ci";
 import { FiUser } from "react-icons/fi";
 import { CiBoxList } from "react-icons/ci";
 import { IoIosNotificationsOutline } from "react-icons/io";
@@ -12,20 +12,54 @@ import { setUserDetails } from '../store/userSlice';
 
 const Header = () => {
   const [profileMenu, setProfileMenu] = useState(false);
+  const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const inputRef = useRef(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const user = useSelector((state) => state?.user?.user);
   const wishlistItems = useSelector((state) => state?.wishlist?.items || []);
 
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (query.trim()) {
+        try {
+          const res = await fetch(`${SummaryAPI.getBooks.url}?search=${query}`);
+          const data = await res.json();
+          setSuggestions(data.data.slice(0, 5));
+          setShowDropdown(true);
+        } catch (err) {
+          console.error('Search fetch error', err);
+        }
+      } else {
+        setSuggestions([]);
+        setShowDropdown(false);
+      }
+    };
+
+    const timeout = setTimeout(fetchSuggestions, 300);
+    return () => clearTimeout(timeout);
+  }, [query]);
+
+  useEffect(() => {
+    const closeDropdown = (e) => {
+      if (!inputRef.current?.contains(e.target)) setShowDropdown(false);
+    };
+
+    document.addEventListener('mousedown', closeDropdown);
+    return () => document.removeEventListener('mousedown', closeDropdown);
+  }, []);
+
   const handleLogout = async () => {
     try {
-      const fetchData = await fetch(SummaryAPI.logoutUser.url, {
+      const res = await fetch(SummaryAPI.logoutUser.url, {
         method: SummaryAPI.logoutUser.method,
         credentials: 'include',
       });
 
-      const data = await fetchData.json();
+      const data = await res.json();
 
       if (data.success) {
         toast.success(data.message);
@@ -40,35 +74,62 @@ const Header = () => {
     }
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (query.trim()) {
+      navigate(`/search?q=${query}`);
+      setShowDropdown(false);
+    }
+  };
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto flex items-center justify-between px-6 h-16">
-
+      <div className="container mx-auto flex items-center justify-between px-6 h-16 relative">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <img src={Logo} alt="Logo" className="h-10 w-auto object-contain" />
         </Link>
 
         {/* Search Bar */}
-        <div className="hidden lg:flex items-center border rounded-full shadow-sm px-3 py-1 focus-within:ring-2 ring-blue-300 w-[300px]">
-          <input
-            type="text"
-            placeholder="Search for books"
-            className="flex-1 outline-none bg-transparent text-sm text-gray-700"
-          />
-          <FcSearch size={20} />
-        </div>
+        <form onSubmit={handleSearchSubmit} ref={inputRef} className="relative hidden lg:flex items-center w-[300px]">
+          <div className="flex items-center border rounded-full shadow-sm px-3 py-1 w-full focus-within:ring-2 ring-blue-300">
+            <input
+              type="text"
+              placeholder="Search for books"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="flex-1 outline-none bg-transparent text-sm text-gray-700"
+            />
+            <CiSearch size={20} />
+          </div>
 
-        {/* Navigation + User Actions */}
+          {showDropdown && suggestions.length > 0 && (
+            <div className="absolute top-full mt-1 left-0 w-full bg-white shadow-lg border rounded-md z-50">
+              {suggestions.map((book) => (
+                <div
+                  key={book._id}
+                  className="px-4 py-2 text-sm text-gray-800 hover:bg-blue-100 cursor-pointer truncate"
+                  onClick={() => {
+                    navigate(`/search?q=${book.bookTitle}`);
+                    setQuery('');
+                    setShowDropdown(false);
+                  }}
+                >
+                  {book.bookTitle}
+                </div>
+              ))}
+            </div>
+          )}
+        </form>
+
+        {/* Right Icons */}
         <div className="flex items-center gap-6 text-gray-700 relative">
-
-          {/* Nav Links */}
           <div className="hidden lg:flex items-center gap-5 text-sm font-medium">
             <Link to="/exchanges" className="hover:text-blue-600 transition">Exchanges</Link>
             <Link to="/chat" className="hover:text-blue-600 transition">Chat</Link>
           </div>
 
-          {/* User Profile Icon */}
+          {/* Profile Icon */}
           <div className="relative">
             <div onClick={() => setProfileMenu((prev) => !prev)} className="cursor-pointer">
               {user?.uploadPic ? (
@@ -95,7 +156,7 @@ const Header = () => {
             )}
           </div>
 
-          {/* Wishlist Icon with Count */}
+          {/* Wishlist Icon */}
           <Link to="/wishlist" className="relative cursor-pointer hover:text-blue-500 transition">
             <CiBoxList size={22} />
             {wishlistItems.length > 0 && (

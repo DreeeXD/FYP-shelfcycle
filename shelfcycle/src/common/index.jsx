@@ -71,6 +71,10 @@ const SummaryAPI = {
     method: "POST",
   },
   getMessages: (userId) => `${domainBackend}/api/messages/${userId}`,
+  getBookById: (id) => `${domainBackend}/api/book/${id}`,
+  getUserById: (id) => `${domainBackend}/api/user/${id}`
+
+
 };
 
 export default SummaryAPI;

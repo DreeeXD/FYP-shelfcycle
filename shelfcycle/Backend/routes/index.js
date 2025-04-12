@@ -23,6 +23,8 @@ const changePassword = require('../controller/changePassword');
 const getUserBooks = require('../controller/getUserBooks');
 const deleteBook = require('../controller/deleteBook');
 const { toggleWishlist, getUserWishlist } = require('../controller/addBookToWishlist');
+const getBookByIdController = require('../controller/getBookById');
+const getPublicUserProfile = require('../controller/getPublicUserProfile');
 
 
 // Auth routes
@@ -35,6 +37,7 @@ router.get('/logout', LogoutUser);
 router.put('/update-user', authenticationToken, updateUser);
 router.post('/change-password', authenticationToken, changePassword);
 
+router.get('/user/:userID', getPublicUserProfile)
 
 router.post('/google-auth', GoogleAuthLogin)
 
@@ -44,6 +47,7 @@ router.get('/get-book', getBooksController);
 router.put('/book/update', authenticationToken, updateBookController);
 router.get('/my-uploads', authenticationToken, getUserBooks);
 router.delete('/book/:id', authenticationToken, deleteBook);
+router.get('/book/:id', getBookByIdController);
 
 // Chat-related
 router.use('/messages', messageRoutes);

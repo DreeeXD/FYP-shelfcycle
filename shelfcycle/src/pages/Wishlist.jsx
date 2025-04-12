@@ -4,6 +4,7 @@ import { FaHeart } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { toggleWishlistItem } from "../store/wishlistSlice";
+import { Link } from "react-router-dom";
 
 const Wishlist = () => {
   const [wishlistBooks, setWishlistBooks] = useState([]);
@@ -39,9 +40,7 @@ const Wishlist = () => {
 
       const data = await res.json();
       if (data.success) {
-        // Remove from local page list
         setWishlistBooks((prev) => prev.filter((book) => book._id !== bookId));
-        // Update Redux wishlist count
         dispatch(toggleWishlistItem(bookId));
         toast.success("Removed from Wishlist");
       } else {
@@ -64,7 +63,7 @@ const Wishlist = () => {
         {loading ? (
           <p className="text-center text-gray-500">Loading your wishlist...</p>
         ) : wishlistBooks.length === 0 ? (
-          <p className="text-center text-gray-500">You haven't added anything to your wishlist yet.</p>
+          <p className="text-center text-gray-500">You haven&apos;t added anything to your wishlist yet.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
             {wishlistBooks.map((book) => (
@@ -72,43 +71,46 @@ const Wishlist = () => {
                 key={book._id}
                 className="relative bg-white p-4 rounded-lg shadow-md hover:shadow-lg border hover:scale-[1.02] transition-all"
               >
-                {/* Wishlist Icon */}
+                {/* Wishlist Icon (outside link) */}
                 <button
                   onClick={() => handleToggleWishlist(book._id)}
-                  className="absolute top-2 left-2 text-red-500 text-xl"
+                  className="absolute top-2 left-2 text-red-500 text-xl z-10"
                   title="Remove from wishlist"
                 >
                   <FaHeart />
                 </button>
 
-                {/* Tag */}
-                <div
-                  className={`absolute top-2 right-2 px-3 py-1 text-xs rounded-full font-medium drop-shadow ${
-                    book.bookType === "sell"
-                      ? "bg-green-200 text-green-800"
-                      : "bg-yellow-200 text-yellow-800"
-                  }`}
-                >
-                  {book.bookType === "sell" ? "For Sale" : "For Exchange"}
-                </div>
+                {/* Card Clickable Area */}
+                <Link to={`/book-details/${book._id}`}>
+                  {/* Tag */}
+                  <div
+                    className={`absolute top-2 right-2 px-3 py-1 text-xs rounded-full font-medium drop-shadow ${
+                      book.bookType === "sell"
+                        ? "bg-green-200 text-green-800"
+                        : "bg-yellow-200 text-yellow-800"
+                    }`}
+                  >
+                    {book.bookType === "sell" ? "For Sale" : "For Exchange"}
+                  </div>
 
-                {/* Image */}
-                <div className="w-full flex justify-center mt-4">
-                  <img
-                    src={book?.bookImage?.[0]}
-                    alt={book.bookTitle || "Book"}
-                    className="w-40 h-56 object-cover rounded-md border"
-                  />
-                </div>
+                  {/* Image */}
+                  <div className="w-full flex justify-center mt-4">
+                    <img
+                      src={book?.bookImage?.[0]}
+                      alt={book.bookTitle || "Book"}
+                      className="w-40 h-56 object-cover rounded-md border"
+                    />
+                  </div>
 
-                {/* Book Info */}
-                <div className="mt-4 px-2 flex flex-col gap-1 text-center">
-                  <h2 className="font-semibold text-lg text-gray-900 truncate">{book.bookTitle}</h2>
-                  <p className="text-sm text-gray-600 truncate">by {book.bookAuthor}</p>
-                  {book.bookType === "sell" && (
-                    <p className="text-md font-bold text-blue-600 mt-2">$ {book.bookPrice}</p>
-                  )}
-                </div>
+                  {/* Book Info */}
+                  <div className="mt-4 px-2 flex flex-col gap-1 text-center">
+                    <h2 className="font-semibold text-lg text-gray-900 truncate">{book.bookTitle}</h2>
+                    <p className="text-sm text-gray-600 truncate">by {book.bookAuthor}</p>
+                    {book.bookType === "sell" && (
+                      <p className="text-md font-bold text-blue-600 mt-2">$ {book.bookPrice}</p>
+                    )}
+                  </div>
+                </Link>
               </div>
             ))}
           </div>
