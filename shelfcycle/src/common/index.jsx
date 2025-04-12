@@ -48,6 +48,10 @@ const SummaryAPI = {
     url: `${domainBackend}/api/my-uploads`,
     method: "GET",
   },
+  getNotifications: {
+    url: `${domainBackend}/api/notifications`,
+    method: "GET",
+  },
   deleteBook: {
     url: `${domainBackend}/api/book`,
     method: "DELETE",

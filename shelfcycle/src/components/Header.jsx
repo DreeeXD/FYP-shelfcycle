@@ -9,12 +9,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import SummaryAPI from '../common';
 import { toast } from 'react-toastify';
 import { setUserDetails } from '../store/userSlice';
+import HeaderNotifications from './HeaderNotifications';
 
 const Header = () => {
   const [profileMenu, setProfileMenu] = useState(false);
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [notificationDropdown, setNotificationDropdown] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const inputRef = useRef(null);
 
   const dispatch = useDispatch();
@@ -47,9 +50,28 @@ const Header = () => {
     const closeDropdown = (e) => {
       if (!inputRef.current?.contains(e.target)) setShowDropdown(false);
     };
-
     document.addEventListener('mousedown', closeDropdown);
     return () => document.removeEventListener('mousedown', closeDropdown);
+  }, []);
+
+  useEffect(() => {
+    const fetchNotificationCount = async () => {
+      try {
+        const res = await fetch(SummaryAPI.getNotifications.url, {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (data.success) {
+          const unread = data.data.filter(n => !n.isRead).length;
+          setUnreadCount(unread);
+        }
+      } catch (err) {
+        console.error("Failed to fetch notification count", err);
+      }
+    };
+
+    fetchNotificationCount();
   }, []);
 
   const handleLogout = async () => {
@@ -168,10 +190,20 @@ const Header = () => {
 
           {/* Notifications */}
           <div className="relative cursor-pointer hover:text-blue-500 transition">
-            <IoIosNotificationsOutline size={26} />
-            <div className="absolute -top-2 -right-1 bg-blue-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
-              0
-            </div>
+            <button onClick={() => setNotificationDropdown(prev => !prev)}>
+              <IoIosNotificationsOutline size={26} />
+              {unreadCount > 0 && (
+                <div className="absolute -top-2 -right-1 bg-blue-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center">
+                  {unreadCount}
+                </div>
+              )}
+            </button>
+            {notificationDropdown && (
+              <HeaderNotifications
+                onClose={() => setNotificationDropdown(false)}
+                onRead={() => setUnreadCount(0)}
+              />
+            )}
           </div>
 
           {/* Login/Logout */}

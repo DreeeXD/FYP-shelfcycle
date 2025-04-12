@@ -1,4 +1,5 @@
-const bookModel = require('../models/bookModel'); // ✅ This must be at the top
+const bookModel = require('../models/bookModel');
+const Notification = require('../models/notificationModel'); // ✅ Import the model
 
 const uploadBookController = async (req, res) => {
   try {
@@ -22,6 +23,13 @@ const uploadBookController = async (req, res) => {
 
     const uploadBook = new bookModel(finalBookData);
     const savedBook = await uploadBook.save();
+
+    // Create a notification
+    await Notification.create({
+      recipient: uploadedBy,
+      message: `Your book "${savedBook.bookTitle}" was successfully uploaded.`,
+      link: `/book-details/${savedBook._id}`,
+    });
 
     res.status(201).json({
       data: savedBook,

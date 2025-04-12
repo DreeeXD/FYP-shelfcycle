@@ -4,7 +4,7 @@ require('dotenv').config()
 const connectDB = require('./config/Database.js')
 const router = require('./routes/index.js')
 const cookieParser = require('cookie-parser')
-
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express()
 app.use(cors({
@@ -15,6 +15,7 @@ app.use(express.json({ limit: '50mb' }));  // Increase JSON body size limit
 app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase URL-encoded body size limit
 app.use(cookieParser())
 app.use("/api", router)
+app.use("/api/notifications", notificationRoutes)
 
 const PORT = 8081 || process.env.PORT
 
