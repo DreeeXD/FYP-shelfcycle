@@ -110,11 +110,7 @@ const SearchResults = () => {
 
         {filteredBooks.length === 0 ? (
           <div className="text-center mt-20 text-gray-600">
-            <img
-              src="https://cdni.iconscout.com/illustration/premium/thumb/no-data-found-9884511-8038072.png"
-              alt="No results"
-              className="mx-auto w-60 mb-6"
-            />
+            
             <p>No books found matching your search.</p>
           </div>
         ) : (
@@ -164,7 +160,7 @@ const SearchResults = () => {
                       by {highlightMatch(book.bookAuthor)}
                     </p>
                     {book.bookType === 'sell' && (
-                      <p className="text-md font-bold text-blue-600 mt-2">₹ {book.bookPrice}</p>
+                      <p className="text-md font-bold text-blue-600 mt-2">$ {book.bookPrice}</p>
                     )}
                   </div>
                 </Link>

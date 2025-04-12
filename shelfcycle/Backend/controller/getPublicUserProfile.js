@@ -3,7 +3,7 @@ const bookModel = require("../models/bookModel");
 
 const getPublicUserProfile = async (req, res) => {
   try {
-    const { id } = req.params; // <- changed from userId to id ✅
+    const { id } = req.params; 
 
     const user = await userModel.findById(id).select("-password");
     if (!user) {

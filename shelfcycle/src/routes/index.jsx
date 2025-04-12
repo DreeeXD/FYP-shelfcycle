@@ -44,6 +44,10 @@ const router = createBrowserRouter([
                 element: <ChatBox />
             },
             {
+                path: "/chat/:receiverId",
+                element: <ChatBox />,
+              },
+            {
                 path: "wishlist",
                 element: <Wishlist/>
             },

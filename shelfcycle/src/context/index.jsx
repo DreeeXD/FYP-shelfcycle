@@ -12,13 +12,13 @@ export const ContextProvider = ({ children }) => {
     try {
       const res = await fetch(SummaryAPI.currentUser.url, {
         method: SummaryAPI.currentUser.method,
-        credentials: 'include', // ✅ important for cookies
+        credentials: 'include', // important for cookies
       });
 
       const data = await res.json();
 
       if (data.success) {
-        setUser(data.data); // ✅ store user in context
+        setUser(data.data); // store user in context
       }
     } catch (err) {
       console.error("Failed to fetch user details:", err);

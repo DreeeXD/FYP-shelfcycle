@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SummaryAPI from "../common";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import moment from "moment";
@@ -13,6 +13,7 @@ const BookDetails = () => {
   const [selectedImage, setSelectedImage] = useState("");
   const wishlist = useSelector((state) => state.wishlist.items || []);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const isWishlisted = wishlist.includes(id);
 
@@ -54,6 +55,14 @@ const BookDetails = () => {
     }
   };
 
+  const handleMessage = () => {
+    if (book?.uploadedBy?._id) {
+      navigate(`/chat?user=${book.uploadedBy._id}`);
+    }
+  };
+
+  const handleGoBack = () => navigate(-1);
+
   if (!book) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
@@ -65,7 +74,7 @@ const BookDetails = () => {
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-8">
       <div className="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6 grid md:grid-cols-2 gap-8">
-        {/* Image Preview & Thumbnails */}
+        {/* Image Section */}
         <div>
           <div className="w-full h-[400px] border rounded-md flex items-center justify-center bg-gray-50 mb-4">
             <img src={selectedImage} alt="Book" className="object-contain h-full" />
@@ -90,6 +99,18 @@ const BookDetails = () => {
           <h1 className="text-2xl font-bold text-gray-800">{book.bookTitle}</h1>
           <p className="text-sm text-gray-500">by {book.bookAuthor}</p>
 
+          {book.owner && (
+            <p className="text-xs text-gray-500">
+              Uploaded by{" "}
+              <span
+                className="text-blue-600 hover:underline cursor-pointer"
+                onClick={() => navigate(`/public-profile/${book.owner._id}`)}
+              >
+                {book.owner.username}
+              </span>
+            </p>
+          )}
+
           <div className="flex items-center gap-3 mt-2">
             <span
               className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -102,9 +123,7 @@ const BookDetails = () => {
             </span>
 
             {book.bookType === "sell" && (
-              <span className="text-blue-600 font-semibold text-lg">
-                $ {book.bookPrice}
-              </span>
+              <span className="text-blue-600 font-semibold text-lg">$ {book.bookPrice}</span>
             )}
           </div>
 
@@ -114,27 +133,46 @@ const BookDetails = () => {
           </div>
 
           <div className="text-sm text-gray-600 mt-3">
-            <p>Posted on: <span className="font-medium">{moment(book.createdAt).format("LL")}</span></p>
+            <p>
+              Posted on:{" "}
+              <span className="font-medium">{moment(book.createdAt).format("LL")}</span>
+            </p>
           </div>
 
           {/* Seller Info */}
-          {book.owner && (
-            <div className="mt-4 border-t pt-4">
-              <h3 className="font-semibold text-gray-800 mb-1">Seller Information</h3>
-              <p className="text-sm text-gray-700">Name: {book.owner.username}</p>
-              <p className="text-sm text-gray-700">Email: {book.owner.email}</p>
-              {book.owner.phone && <p className="text-sm text-gray-700">Phone: {book.owner.phone}</p>}
-            </div>
+          {book.uploadedBy && (
+          <div className="mt-4 border-t pt-4">
+            <h3 className="font-semibold text-gray-800 mb-1">Uploaded by</h3>
+            <p className="text-sm text-gray-700">Name: {book.uploadedBy.username}</p>
+            <p className="text-sm text-gray-700">Email: {book.uploadedBy.email}</p>
+            {book.uploadedBy.phone && (
+              <p className="text-sm text-gray-700">Phone: {book.uploadedBy.phone}</p>
+            )}
+          </div>
           )}
 
-          {/* Wishlist Button */}
-          <div className="mt-4">
+          {/* Action Buttons */}
+          <div className="mt-6 flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleWishlistToggle}
-              className="flex items-center gap-2 bg-pink-100 text-pink-600 border border-pink-300 px-4 py-2 rounded-full hover:bg-pink-200 transition text-sm"
+              className="flex-1 flex items-center justify-center gap-2 bg-pink-100 text-pink-600 border border-pink-300 px-4 py-2 rounded-full hover:bg-pink-200 transition text-sm"
             >
               {isWishlisted ? <FaHeart /> : <FaRegHeart />}
               {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+            </button>
+
+            <button
+              onClick={handleMessage}
+              className="flex-1 bg-blue-100 text-blue-600 border border-blue-300 px-4 py-2 rounded-full hover:bg-blue-200 transition text-sm"
+            >
+              💬 Contact the Seller
+            </button>
+
+            <button
+              onClick={handleGoBack}
+              className="flex-1 bg-gray-100 text-gray-600 border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-200 transition text-sm"
+            >
+              ← Go Back
             </button>
           </div>
         </div>
