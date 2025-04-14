@@ -73,6 +73,26 @@ const UserUploads = () => {
     }
   };
 
+  const handleStatusChange = async (bookId, status) => {
+    try {
+      const res = await fetch(`${SummaryAPI.updateBook.url}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: bookId, bookStatus: status }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('Book status updated!');
+        fetchMyBooks();
+      } else {
+        toast.error('Failed to update status');
+      }
+    } catch (err) {
+      toast.error('Error updating book status');
+    }
+  };
+
   const sortedBooks = [...uploads].sort((a, b) => {
     if (sortOption === 'newest') {
       return new Date(b.createdAt) - new Date(a.createdAt);
@@ -150,6 +170,19 @@ const UserUploads = () => {
                 <p className={`text-sm font-medium ${book.bookType === 'sell' ? 'text-blue-600' : 'text-yellow-600'}`}>
                   {book.bookType === 'sell' ? `$ ${book.bookPrice}` : 'For Exchange'}
                 </p>
+
+                {/* Book Status Dropdown */}
+                <div className="mt-2">
+                  <select
+                    value={book.bookStatus || 'available'}
+                    onChange={(e) => handleStatusChange(book._id, e.target.value)}
+                    className="text-sm border rounded px-2 py-1 mt-1"
+                  >
+                    <option value="available">Available</option>
+                    <option value="sold">Sold</option>
+                    <option value="exchanged">Exchanged</option>
+                  </select>
+                </div>
               </div>
             </div>
           ))}

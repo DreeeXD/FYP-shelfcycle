@@ -10,13 +10,15 @@ import SummaryAPI from '../common';
 import { toast } from 'react-toastify';
 import { setUserDetails } from '../store/userSlice';
 import HeaderNotifications from './HeaderNotifications';
+import PropTypes from 'prop-types';
 
-const Header = () => {
+const Header = ({ socket }) => {
   const [profileMenu, setProfileMenu] = useState(false);
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [notificationDropdown, setNotificationDropdown] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const inputRef = useRef(null);
 
@@ -25,6 +27,7 @@ const Header = () => {
   const user = useSelector((state) => state?.user?.user);
   const wishlistItems = useSelector((state) => state?.wishlist?.items || []);
 
+  // Book suggestions
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (query.trim()) {
@@ -54,8 +57,9 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', closeDropdown);
   }, []);
 
+  // Fetch initial notifications
   useEffect(() => {
-    const fetchNotificationCount = async () => {
+    const fetchNotifications = async () => {
       try {
         const res = await fetch(SummaryAPI.getNotifications.url, {
           method: "GET",
@@ -63,17 +67,33 @@ const Header = () => {
         });
         const data = await res.json();
         if (data.success) {
+          setNotifications(data.data);
           const unread = data.data.filter(n => !n.isRead).length;
           setUnreadCount(unread);
         }
       } catch (err) {
-        console.error("Failed to fetch notification count", err);
+        console.error("Failed to fetch notifications", err);
       }
     };
 
-    fetchNotificationCount();
+    fetchNotifications();
   }, []);
 
+  // Listen for incoming notifications in real-time
+  useEffect(() => {
+    if (socket) {
+      console.log("👂 Listening for new_notification");
+      socket.on("new_notification", (newNotification) => {
+        console.log("📬 Notification received in Header:", newNotification);
+        setNotifications((prev) => [newNotification, ...prev]);
+        setUnreadCount((prev) => prev + 1);
+      });
+  
+      return () => socket.off("new_notification");
+    }
+  }, [socket]);
+
+  // Logout
   const handleLogout = async () => {
     try {
       const res = await fetch(SummaryAPI.logoutUser.url, {
@@ -96,6 +116,7 @@ const Header = () => {
     }
   };
 
+  // Search submit
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (query.trim()) {
@@ -112,7 +133,7 @@ const Header = () => {
           <img src={Logo} alt="Logo" className="h-10 w-auto object-contain" />
         </Link>
 
-        {/* Search Bar */}
+        {/* Search */}
         <form onSubmit={handleSearchSubmit} ref={inputRef} className="relative hidden lg:flex items-center w-[300px]">
           <div className="flex items-center border rounded-full shadow-sm px-3 py-1 w-full focus-within:ring-2 ring-blue-300">
             <input
@@ -144,7 +165,7 @@ const Header = () => {
           )}
         </form>
 
-        {/* Right Icons */}
+        {/* Right Section */}
         <div className="flex items-center gap-6 text-gray-700 relative">
           <div className="hidden lg:flex items-center gap-5 text-sm font-medium">
             <Link to="/exchanges" className="hover:text-blue-600 transition">Exchanges</Link>
@@ -164,9 +185,8 @@ const Header = () => {
                 <FiUser size={25} className="hover:text-blue-500 transition" />
               )}
             </div>
-
             {profileMenu && (
-              <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-md border z-50">
+              <div className="absolute right-[-100px] mt-2 w-44 bg-white shadow-lg rounded-md border z-50">
                 <Link
                   to="/user-profile"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -178,7 +198,7 @@ const Header = () => {
             )}
           </div>
 
-          {/* Wishlist Icon */}
+          {/* Wishlist */}
           <Link to="/wishlist" className="relative cursor-pointer hover:text-blue-500 transition">
             <CiBoxList size={22} />
             {wishlistItems.length > 0 && (
@@ -200,6 +220,8 @@ const Header = () => {
             </button>
             {notificationDropdown && (
               <HeaderNotifications
+                notifications={notifications}
+                setNotifications={setNotifications}
                 onClose={() => setNotificationDropdown(false)}
                 onRead={() => setUnreadCount(0)}
               />
@@ -228,6 +250,10 @@ const Header = () => {
       </div>
     </header>
   );
+};
+
+Header.propTypes = {
+  socket: PropTypes.object,
 };
 
 export default Header;

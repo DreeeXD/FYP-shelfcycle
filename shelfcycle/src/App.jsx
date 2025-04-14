@@ -4,15 +4,17 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import { ToastContainer } from 'react-toastify';
 import SummaryAPI from './common';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Context from './context';
 import { useDispatch } from 'react-redux';
 import { setUserDetails } from './store/userSlice';
-import socket from './helpers/socket'; 
+import socket from './helpers/socket';
 
 function App() {
   const dispatch = useDispatch();
   const location = useLocation();
+
+  const [socketReady, setSocketReady] = useState(false); 
 
   const fetchUserDetails = async () => {
     try {
@@ -35,10 +37,11 @@ function App() {
 
       if (dataAPI.success) {
         dispatch(setUserDetails(dataAPI.data));
-        
-        // Connect socket once user is authenticated
-        socket.connect();
-        socket.emit("setup", dataAPI.data._id); 
+
+        // ✅ Connect and set up socket
+        if (!socket.connected) socket.connect();
+        socket.emit("setup", dataAPI.data._id);
+        setSocketReady(true); // ✅ Only after socket is ready
       }
 
       console.log("User data", dataAPI);
@@ -51,13 +54,12 @@ function App() {
     fetchUserDetails();
   }, []);
 
-  // Add routes here where footer should be hidden
   const hideFooterRoutes = ['/chat'];
 
   return (
     <Context.Provider value={{ fetchUserDetails }}>
       <ToastContainer />
-      <Header />
+      <Header socket={socketReady ? socket : null} />
       <main>
         <Outlet />
       </main>

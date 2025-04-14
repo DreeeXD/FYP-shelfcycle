@@ -27,13 +27,18 @@ const getBookByIdController = require('../controller/getBookById');
 const getPublicUserProfile = require('../controller/getPublicUserProfile');
 const getChatUsers = require('../controller/getChatUsers');
 const searchUsers = require('../controller/searchChatUsers');
-
+const reviewRoutes = require("./reviewRoutes");
+const markBookStatus = require('../controller/markBookStatus');
+const notificationRoutes = require("./notificationRoutes");
+const authRoutes = require("./authRoutes");
+const VerifyEmailOTP = require('../controller/verifyEmailOTP');
 
 // Auth routes
 router.post('/signup', SignupUserController);
 router.post('/login', LoginUserController);
 router.get('/user-details', authenticationToken, userDetailsController);
 router.get('/logout', LogoutUser);
+router.post('/verify-otp', VerifyEmailOTP);
 
 // User-related
 router.put('/update-user', authenticationToken, updateUser);
@@ -47,9 +52,12 @@ router.post('/google-auth', GoogleAuthLogin)
 router.post('/book-upload', authenticationToken, uploadBookController);
 router.get('/get-book', getBooksController);
 router.put('/book/update', authenticationToken, updateBookController);
+router.put('/book/update/:id', authenticationToken, updateBookController);
 router.get('/my-uploads', authenticationToken, getUserBooks);
 router.delete('/book/:id', authenticationToken, deleteBook);
 router.get('/book/:id', getBookByIdController);
+router.put("/book/:id/mark", authenticationToken, markBookStatus);
+
 
 // Chat-related
 router.use('/messages', messageRoutes);
@@ -61,6 +69,13 @@ router.use('/users', userRoutes);
 //wishlist related
 router.get('/wishlist', authenticationToken, getUserWishlist);
 router.post('/wishlist', authenticationToken, toggleWishlist);
+
+router.use("/notifications", notificationRoutes);
+
+
+router.use("/auth", authRoutes);
+
+//review related
+router.use("/reviews", reviewRoutes);
+
 module.exports = router;
-
-

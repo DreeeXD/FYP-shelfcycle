@@ -1,30 +1,38 @@
 const bookModel = require("../models/bookModel");
+const reviewModel = require("../models/reviewModel");
+const userModel = require("../models/userModel");
 
 const getBookByIdController = async (req, res) => {
   try {
-    const { id } = req.params;
+    const book = await bookModel.findById(req.params.id)
+      .populate("uploadedBy", "-password");
 
-    const book = await bookModel
-    .findById(id)
-    .populate("uploadedBy", "-password");
-    
     if (!book) {
-      return res.status(404).json({
-        success: false,
-        message: "Book not found",
-      });
+      return res.status(404).json({ 
+        success: false, 
+        message: "Book not found"
+       });
     }
 
-    res.status(200).json({
-      success: true,
-      data: book,
-    });
-  } catch (error) {
-    console.error("Error fetching book:", error);
-    res.status(500).json({
+    const reviews = await reviewModel.find({ reviewedUser: book.uploadedBy._id });
+    const averageRating = reviews.length
+      ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
+      : null;
+
+    const bookData = book.toObject();
+    bookData.uploadedBy.averageRating = averageRating;
+
+    res.status(200).json({ 
+      success: true, 
+      data: bookData
+     });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ 
       success: false,
-      message: "Server error",
-    });
+      message: "Error fetching book details"
+     });
   }
 };
 

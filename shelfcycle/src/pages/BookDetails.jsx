@@ -57,7 +57,7 @@ const BookDetails = () => {
 
   const handleMessage = () => {
     if (book?.uploadedBy?._id) {
-      navigate(`/chat?user=${book.uploadedBy._id}`);
+      navigate(`/chat/${book.uploadedBy._id}`);
     }
   };
 
@@ -147,6 +147,11 @@ const BookDetails = () => {
             <p className="text-sm text-gray-700">Email: {book.uploadedBy.email}</p>
             {book.uploadedBy.phone && (
               <p className="text-sm text-gray-700">Phone: {book.uploadedBy.phone}</p>
+            )}
+            {book.uploadedBy.averageRating && (
+            <p className="text-sm text-yellow-600">
+            ⭐ Average Rating: {book.uploadedBy.averageRating}
+            </p>
             )}
           </div>
           )}

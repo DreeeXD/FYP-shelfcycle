@@ -43,6 +43,15 @@ const bookSchema = mongoose.Schema({
   bookImage: {
     type: [String],
     default: [],
+  },
+  bookStatus: {
+    type: String,
+    enum: ["available", "sold"],
+    default: "available"
+  },
+  isExchanged: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true,

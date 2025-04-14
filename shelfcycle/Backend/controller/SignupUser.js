@@ -1,70 +1,58 @@
-const userModel = require("../models/userModel")
+const userModel = require("../models/userModel");
 const bcrypt = require('bcryptjs');
-async function SignupUserController(request, response) {
-    try{
-        console.log("request.body", request.body)
-        
-        const { username, email, phone, password } = request.body
+const generateOTP = require("../utils/generateOTP");
+const sendEmail = require("../utils/sendEmail");
 
-        
-        const user = await userModel.findOne({email})
-        console.log("user", user)
+async function SignupUserController(req, res) {
+  try {
+    const { username, email, phone, password, uploadPic } = req.body;
 
-        if (user) {
-            throw new Error("This email is already in use. Please try to log in")
-        }
-
-
-        if (!username){
-            throw new Error('Please enter your username')
-        }
-        if (!email){
-            throw new Error('Please provide your email address')
-        }
-        if (!phone){
-            throw new Error('Please provide your phone number')
-        }
-        if (!password){
-            throw new Error('You need to provide your password')
-        }
-
-        
-
-        const salt = bcrypt.genSaltSync(10);
-        const hashPassword = await bcrypt.hashSync(password, salt); //its a promise so await
-
-        if (!hashPassword){
-            throw new Error('Password hashing failed')
-        }
-
-        const payload = {
-            ...request.body,
-            password: hashPassword
-        }
-
-
-        const userData = new userModel(payload);
-
-
-        const saveUser = await userData.save()
-        
-
-        response.status(201).json({
-            data: saveUser,
-            success: true,
-            error: false,
-            message: "User profile successfully created!"
-        })
-
+    if (!username || !email || !phone || !password) {
+      throw new Error("All fields are required");
     }
-    catch(error){
-        response.status(500).json({
-            message : error.message,
-            error : true,
-            success : false
-        })
 
-    }
+    const existingUser = await userModel.findOne({ email });
+    if (existingUser) throw new Error("This email is already in use.");
+
+    const hashPassword = await bcrypt.hash(password, 10);
+    const otp = generateOTP();
+    const otpExpires = Date.now() + 1000 * 60 * 10; // 10 min
+
+    const newUser = new userModel({
+      username,
+      email,
+      phone,
+      password: hashPassword,
+      uploadPic,
+      emailOTP: otp,
+      emailOTPExpires: new Date(otpExpires),
+      emailVerified: false,
+    });
+
+    await newUser.save();
+
+    const emailBody = `
+      <p>Hello ${username},</p>
+      <p>Your ShelfCycle verification code is:</p>
+      <h2 style="color:#3B82F6">${otp}</h2>
+      <p>This code is valid for 10 minutes.</p>
+    `;
+
+    await sendEmail(email, "ShelfCycle Email Verification Code", emailBody);
+
+    res.status(200).json({
+      success: true,
+      message: "Signup successful! OTP sent to email.",
+      userId: newUser._id,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: true,
+      message: error.message,
+    });
+  }
 }
 
 module.exports = SignupUserController;

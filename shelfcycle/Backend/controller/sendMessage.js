@@ -1,4 +1,5 @@
 const Message = require("../models/messageModel");
+const Notification = require("../models/notificationModel");
 
 const sendMessage = async (req, res) => {
   const { receiver, text } = req.body;
@@ -15,8 +16,25 @@ const sendMessage = async (req, res) => {
       receiver,
     });
 
+    // Create chat notification for receiver
+    const notificationData = {
+      recipient: receiver,
+      message: `You have a new message`,
+      link: `/chat/${sender}`,
+      isRead: false,
+    };
+
+    const savedNotification = await Notification.create(notificationData);
+
+    
+    global.io.emit("send_notification", {
+      recipientId: receiver.toString(),
+      notification: savedNotification,
+    });
+
     res.status(201).json(message);
   } catch (err) {
+    console.error("Send Message Error:", err);
     res.status(500).json({ error: "Failed to send message" });
   }
 };

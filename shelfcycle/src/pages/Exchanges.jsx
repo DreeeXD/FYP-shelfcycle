@@ -83,8 +83,27 @@ const Exchanges = () => {
     }
   };
 
-  const exchangeBooks = sortBooks(allBooks.filter(book => book.bookType === 'exchange'), exchangeSort);
-  const saleBooks = sortBooks(allBooks.filter(book => book.bookType === 'sell'), saleSort);
+  const exchangeBooks = sortBooks(
+    allBooks.filter(
+      book =>
+        book.bookType === 'exchange' &&
+        book.bookStatus !== 'sold' &&
+        book.isExchanged !== true &&
+        book.isExchanged !== 'true'
+    ),
+    exchangeSort
+  );
+  
+  const saleBooks = sortBooks(
+    allBooks.filter(
+      book =>
+        book.bookType === 'sell' &&
+        book.bookStatus !== 'sold' &&
+        book.isExchanged !== true &&
+        book.isExchanged !== 'true'
+    ),
+    saleSort
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
@@ -223,18 +242,17 @@ const BookCard = ({ book, onWishlist, isWishlisted }) => {
         </div>
       </Link>
 
-      {/* Wishlist button (placed outside the link to avoid nested navigation) */}
       <button
         title="Toggle Wishlist"
         onClick={() => onWishlist(book._id)}
         className="absolute top-2 left-2 text-xl z-10 transition"
-          >
+      >
         {isWishlisted ? (
           <FaHeart className="text-red-500" />
         ) : (
           <FaRegHeart className="text-gray-400 hover:text-red-500" />
         )}
-    </button>
+      </button>
     </div>
   );
 };

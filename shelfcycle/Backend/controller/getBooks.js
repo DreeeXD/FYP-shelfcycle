@@ -2,16 +2,21 @@ const bookModel = require("../models/bookModel");
 
 const getBooksController = async (request, response) => {
   try {
-    const searchQuery = request.query.search || request.query.query || ""; // Accept both
+    const searchQuery = request.query.search || request.query.query || "";
 
     let filter = {};
     if (searchQuery.trim()) {
       filter = {
-        bookTitle: { $regex: searchQuery, $options: "i" }, // case-insensitive partial match
+        bookTitle: { $regex: searchQuery, $options: "i" },
       };
     }
 
-    const getBooks = await bookModel.find(filter).sort({ createdAt: -1 });
+    const getBooks = await bookModel
+      .find(filter)
+      .select("bookTitle bookAuthor bookImage bookType bookPrice bookStatus isExchanged uploadedBy createdAt") // ensure we return these fields
+      .populate("uploadedBy", "username email averageRating") // optional if you need uploader info
+
+      .sort({ createdAt: -1 });
 
     response.status(200).json({
       data: getBooks,
@@ -19,6 +24,7 @@ const getBooksController = async (request, response) => {
       success: true,
     });
   } catch (error) {
+    console.error("Get books error:", error);
     response.status(500).json({
       message: error.message,
       error: true,

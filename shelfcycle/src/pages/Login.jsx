@@ -20,32 +20,35 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const dataResponse = await fetch(SummaryAPI.login.url, {
-      method: SummaryAPI.login.method,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    try {
+      const res = await fetch(SummaryAPI.login.url, {
+        method: SummaryAPI.login.method,
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    const dataAPI = await dataResponse.json();
+      const result = await res.json();
 
-    if (dataAPI.success) {
-      toast.success(dataAPI.message);
-      fetchUserDetails();
-      navigate("/");
-    }
-
-    if (dataAPI.error) {
-      toast.error(dataAPI.message);
+      if (result.success) {
+        toast.success(result.message);
+        fetchUserDetails();
+        navigate("/");
+      } else {
+        toast.error(result.message || "Login failed");
+      }
+    } catch (err) {
+      toast.error("Something went wrong.");
+      console.error(err);
     }
   };
 
   const handleGoogleLogin = async (credentialResponse) => {
     try {
       const res = await fetch(SummaryAPI.googleLogin.url, {
-        method: SummaryAPI.googleLogin.method,
+        method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
@@ -55,12 +58,17 @@ const Login = () => {
   
       const data = await res.json();
   
-      if (data.success) {
+      if (data.requiresVerification) {
+        toast.info(data.message || "OTP sent. Please verify.");
+        navigate("/verify-email", {
+          state: { email: data.data.email }, // 👈 pass email
+        });
+      } else if (data.success) {
         toast.success("Google login successful");
         fetchUserDetails();
         navigate("/");
       } else {
-        toast.error("Google login failed");
+        toast.error(data.message || "Google login failed");
       }
     } catch (err) {
       toast.error("Something went wrong");
@@ -86,6 +94,7 @@ const Login = () => {
                 name="email"
                 value={data.email}
                 onChange={handleChange}
+                required
                 className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
@@ -98,6 +107,7 @@ const Login = () => {
                 name="password"
                 value={data.password}
                 onChange={handleChange}
+                required
                 className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10"
               />
               <span
@@ -123,10 +133,8 @@ const Login = () => {
             </button>
           </form>
 
-          {/* OR Divider */}
           <div className="my-4 text-center text-gray-500">— or —</div>
 
-          {/* Google Login */}
           <div className="flex justify-center">
             <GoogleLogin
               onSuccess={handleGoogleLogin}

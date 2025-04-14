@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { useParams, Link } from "react-router-dom";
 import { FaPaperPlane } from "react-icons/fa";
 import SummaryAPI from "../common";
 import io from "socket.io-client";
 import UserSearchDropdown from "../components/UserSearchDropdown";
 
-const socket = io(import.meta.env.VITE_BACKEND_URL, { withCredentials: true });
+const socket = io(import.meta.env.VITE_BACKEND_URL, {
+  withCredentials: true,
+});
+
 let typingTimeout;
 
 const ChatPage = () => {
+  const { receiverId } = useParams();
   const user = useSelector((state) => state?.user?.user);
   const [chatUsers, setChatUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -16,11 +21,10 @@ const ChatPage = () => {
   const [currentMsg, setCurrentMsg] = useState("");
   const [partnerTyping, setPartnerTyping] = useState(false);
   const [unreadMap, setUnreadMap] = useState({});
-  const chatEndRef = useRef(null);
+  const chatBoxRef = useRef(null);
 
   useEffect(() => {
     if (!user?._id) return;
-
     socket.emit("register_user", user._id);
     fetchChatUsers();
 
@@ -49,7 +53,6 @@ const ChatPage = () => {
 
     socket.on("typing", () => setPartnerTyping(true));
     socket.on("stop_typing", () => setPartnerTyping(false));
-
     socket.on("message_read", ({ messageId }) => {
       setMessages((prev) =>
         prev.map((msg) =>
@@ -67,7 +70,9 @@ const ChatPage = () => {
   }, [user, selectedUser]);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const fetchChatUsers = async () => {
@@ -81,6 +86,16 @@ const ChatPage = () => {
       console.error("Fetch chat users failed", err);
     }
   };
+
+  useEffect(() => {
+    if (receiverId && chatUsers.length > 0) {
+      const matchedUser = chatUsers.find((u) => u._id === receiverId);
+      if (matchedUser) {
+        setSelectedUser(matchedUser);
+        fetchMessages(receiverId);
+      }
+    }
+  }, [receiverId, chatUsers]);
 
   const fetchMessages = async (partnerId) => {
     try {
@@ -208,17 +223,20 @@ const ChatPage = () => {
                   {selectedUser.username[0]}
                 </div>
               )}
-              <h2 className="text-xl font-bold text-gray-800">
+              <Link
+                to={`/user/${selectedUser._id}`}
+                className="text-xl font-bold text-blue-700 hover:underline"
+              >
                 {selectedUser.username}
-              </h2>
+              </Link>
             </>
           ) : (
             <p className="text-gray-500">Select a user to start chatting</p>
           )}
         </div>
 
-        {/* Chat body */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+        {/* Messages */}
+        <div ref={chatBoxRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
           {messages.map((msg, index) => (
             <div
               key={msg._id || index}
@@ -242,7 +260,6 @@ const ChatPage = () => {
           {partnerTyping && (
             <p className="text-xs text-gray-500 ml-2">Typing...</p>
           )}
-          <div ref={chatEndRef} />
         </div>
 
         {/* Footer */}

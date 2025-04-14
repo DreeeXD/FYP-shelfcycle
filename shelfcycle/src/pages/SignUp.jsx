@@ -60,10 +60,9 @@ const SignUp = () => {
         
         const dataAPI = await dataResponse.json()
 
-        if(dataAPI.success){
-          toast.success(dataAPI.message)
-          navigate("/login")
-
+        if (dataAPI.success) {
+          toast.success(dataAPI.message);
+          navigate("/verify-email", { state: { userId: dataAPI.userId } });
         }
         if(dataAPI.error){
           toast.error(dataAPI.message)

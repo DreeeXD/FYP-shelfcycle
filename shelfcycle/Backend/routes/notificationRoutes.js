@@ -5,11 +5,14 @@ const {
   createNotification,
   markNotificationAsRead,
 } = require("../controller/notificationController");
+const markAllNotificationsRead = require("../controller/markNotificationAsRead"); 
+const authenticationToken = require("../middleware/authenticationToken");
 
-const authenticateUser = require("../middleware/authenticationToken");
+router.get("/", authenticationToken, getUserNotifications);
+router.post("/", authenticationToken, createNotification);
+router.patch("/:id", authenticationToken, markNotificationAsRead);
 
-router.get("/", authenticateUser, getUserNotifications);
-router.post("/", authenticateUser, createNotification);
-router.put("/:id/read", authenticateUser, markNotificationAsRead);
+
+router.put("/mark-all-read", authenticationToken, markAllNotificationsRead);
 
 module.exports = router;

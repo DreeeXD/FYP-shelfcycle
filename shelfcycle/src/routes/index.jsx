@@ -13,6 +13,8 @@ import Wishlist from "../pages/Wishlist.jsx"
 import SearchResults from "../pages/SearchResults.jsx"
 import BookDetails from "../pages/BookDetails.jsx"
 import PublicUserProfile from "../pages/PublicUserProfile.jsx"
+import ResetPassword from "../pages/ResetPassword.jsx"
+import VerifyEmail from "../pages/VerifyEmail.jsx"
 
 const router = createBrowserRouter([
     {
@@ -36,6 +38,10 @@ const router = createBrowserRouter([
                 element: <SignUp/>
             },
             {
+                path: "verify-email",
+                element: <VerifyEmail />
+            },
+            {
                 path: "exchanges",
                 element: <Exchanges/>
             },
@@ -52,12 +58,24 @@ const router = createBrowserRouter([
                 element: <Wishlist/>
             },
             {
+                path: "forgot-password",
+                element: <ForgotPassword />
+            },
+            {
+                path: "reset-password/:token",
+                element: <ResetPassword />
+            },
+            {
                 path: "search",
                 element: <SearchResults />
             },
             {
                 path: "public-profile/:userId",
                 element: <PublicUserProfile />
+              },
+              {
+                path: "/user/:userId",
+                element: <PublicUserProfile /> 
               },
             {
                 path: "book-details/:id",

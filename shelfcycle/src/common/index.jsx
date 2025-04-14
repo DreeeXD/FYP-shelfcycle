@@ -1,10 +1,13 @@
-
 const domainBackend = "http://localhost:8081";
 
 const SummaryAPI = {
   signUp: {
     url: `${domainBackend}/api/signup`,
     method: "post",
+  },
+  verifyEmailOTP: {
+    url: `${domainBackend}/api/verify-otp`,
+    method: "POST",
   },
   login: {
     url: `${domainBackend}/api/login`,
@@ -30,6 +33,13 @@ const SummaryAPI = {
     url: `${domainBackend}/api/change-password`,
     method: "POST",
   },
+  forgotPassword: {
+    url: `${domainBackend}/api/auth/forgot-password`,
+    method: "POST",
+  },
+  
+
+  
 
   // Book routes
   uploadBook: {
@@ -78,14 +88,21 @@ const SummaryAPI = {
     url: `${domainBackend}/api/search-users`,
     method: "GET",
   },
+  markAllNotificationsRead: {
+    url: `${domainBackend}/api/notifications/mark-all-read`,
+    method: "PUT",
+  },
   sendMessage: {
     url: `${domainBackend}/api/messages`,
     method: "POST",
   },
   getMessages: (userId) => `${domainBackend}/api/messages/${userId}`,
   getBookById: (id) => `${domainBackend}/api/book/${id}`,
-  getUserById: (id) => `${domainBackend}/api/user/${id}`
-
+  getUserById: (id) => `${domainBackend}/api/user/${id}`,
+  getUserReviews: (userId) => `${domainBackend}/api/reviews/${userId}`,
+  submitReview: (userId) => `${domainBackend}/api/reviews/${userId}`,
+  markNotificationRead: (id) => `${domainBackend}/api/notification/${id}`,
+  resetPassword: (token) => `${domainBackend}/api/auth/reset-password/${token}`,
 
 };
 
