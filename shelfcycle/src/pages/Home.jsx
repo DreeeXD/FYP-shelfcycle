@@ -58,7 +58,7 @@ export default function HomePage() {
 
       {/* For Sale Books */}
       <section className="py-16 px-6">
-        <h3 className="text-4xl font-bold mb-10 text-center text-[#2b1e17]">Hot Arrivals (For Sale)</h3>
+        <h3 className="text-4xl font-bold mb-10 text-center text-blue-800">Hot Arrivals (For Sale)</h3>
         <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {books.filter(book => book.bookType === "sell").slice(0, 4).length > 0 ? (
             books

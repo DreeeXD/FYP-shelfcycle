@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import Context from './context';
 import { useDispatch } from 'react-redux';
 import { setUserDetails } from './store/userSlice';
+import socket from './helpers/socket'; 
 
 function App() {
   const dispatch = useDispatch();
@@ -34,6 +35,10 @@ function App() {
 
       if (dataAPI.success) {
         dispatch(setUserDetails(dataAPI.data));
+        
+        // Connect socket once user is authenticated
+        socket.connect();
+        socket.emit("setup", dataAPI.data._id); 
       }
 
       console.log("User data", dataAPI);

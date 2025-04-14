@@ -25,6 +25,8 @@ const deleteBook = require('../controller/deleteBook');
 const { toggleWishlist, getUserWishlist } = require('../controller/addBookToWishlist');
 const getBookByIdController = require('../controller/getBookById');
 const getPublicUserProfile = require('../controller/getPublicUserProfile');
+const getChatUsers = require('../controller/getChatUsers');
+const searchUsers = require('../controller/searchChatUsers');
 
 
 // Auth routes
@@ -51,6 +53,8 @@ router.get('/book/:id', getBookByIdController);
 
 // Chat-related
 router.use('/messages', messageRoutes);
+router.get('/chat-users', authenticationToken, getChatUsers);
+router.get('/search-users', authenticationToken, searchUsers);
 
 router.use('/users', userRoutes);
 
