@@ -22,10 +22,19 @@ module.exports = (io) => {
       console.log(`Message sent in room ${roomId}:`, message);
     });
 
-    // Typing indicator
     socket.on("typing", ({ roomId, sender }) => {
-      socket.to(roomId).emit("typing", sender);
-    });
+        socket.to(roomId).emit("typing", sender);
+      });
+      
+      socket.on("stop_typing", ({ roomId }) => {
+        socket.to(roomId).emit("stop_typing");
+      });
+      
+      socket.on("mark_as_read", async ({ messageIds }) => {
+        const Message = require("../models/messageModel");
+        await Message.updateMany({ _id: { $in: messageIds } }, { $set: { read: true } });
+      });
+      
 
     // Real-time notifications (to specific user)
     socket.on("send_notification", ({ recipientId, notification }) => {

@@ -73,7 +73,11 @@ const SummaryAPI = {
   getChatUsers: {
     url: `${domainBackend}/api/chat-users`,
     method: "GET",
-  },  
+  }, 
+  searchUsers: {
+    url: `${domainBackend}/api/search-users`,
+    method: "GET",
+  },
   sendMessage: {
     url: `${domainBackend}/api/messages`,
     method: "POST",
