@@ -58,12 +58,7 @@ const Login = () => {
   
       const data = await res.json();
   
-      if (data.requiresVerification) {
-        toast.info(data.message || "OTP sent. Please verify.");
-        navigate("/verify-email", {
-          state: { email: data.data.email }, // 👈 pass email
-        });
-      } else if (data.success) {
+      if (data.success) {
         toast.success("Google login successful");
         fetchUserDetails();
         navigate("/");

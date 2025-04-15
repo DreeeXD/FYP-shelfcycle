@@ -1,8 +1,6 @@
-const { OAuth2Client } = require("google-auth-library");
-const userModel = require("../models/userModel");
-const generateToken = require("../utils/generateToken");
-const sendEmail = require("../utils/sendEmail");
-const generateOTP = require("../utils/generateOTP");
+const { OAuth2Client } = require('google-auth-library');
+const userModel = require('../models/userModel');
+const generateToken = require('../utils/generateToken');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -21,66 +19,40 @@ const GoogleAuthLogin = async (req, res) => {
     let user = await userModel.findOne({ email });
 
     if (!user) {
-      // Create user but not verified yet
-      const otp = generateOTP();
-      const otpExpires = Date.now() + 10 * 60 * 1000;
-
+      // Create new user and auto-verify
       user = await userModel.create({
         email,
         username: name,
         uploadPic: picture,
         password: sub,
-        emailOTP: otp,
-        emailOTPExpires: otpExpires,
-        emailVerified: false,
-      });
-
-      // Send OTP email
-      await sendEmail(email, "Verify Your Email", `Your OTP is: ${otp}`);
-
-      return res.status(200).json({
-        requiresVerification: true,
-        message: "We sent an OTP to your email. Please verify to complete signup.",
-        data: { email },
+        emailVerified: true, // ✅ Skip OTP and mark verified
       });
     }
 
+    // If user was created via signup and still unverified (somehow)
     if (!user.emailVerified) {
-      // Resend OTP
-      const otp = generateOTP();
-      const otpExpires = Date.now() + 10 * 60 * 1000;
-
-      user.emailOTP = otp;
-      user.emailOTPExpires = otpExpires;
+      user.emailVerified = true;
       await user.save();
-
-      await sendEmail(email, "Verify Your Email", `Your OTP is: ${otp}`);
-
-      return res.status(200).json({
-        requiresVerification: true,
-        message: "Please verify your email. We've sent a new OTP.",
-        data: { email },
-      });
     }
 
-    // ✅ Verified user – log them in
+    // Generate token
     const token = generateToken(user._id);
-    res.cookie("token", token, {
+
+    res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'Lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     res.status(200).json({
+      success: true,
       message: "Google login successful",
       data: user,
-      success: true,
-      error: false,
     });
 
   } catch (error) {
-    console.error("Google login error:", error);
+    console.error('Google login error:', error);
     res.status(500).json({
       message: "Google login failed",
       success: false,
