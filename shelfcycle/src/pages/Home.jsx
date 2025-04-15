@@ -5,6 +5,7 @@ import { toggleWishlistItem } from '../store/wishlistSlice';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 export default function HomePage() {
   const [books, setBooks] = useState([]);
@@ -51,24 +52,40 @@ export default function HomePage() {
     <div className="bg-[#fff8f3] text-[#2b1e17] font-sans">
       {/* Hero Banner */}
       <section className="w-full overflow-hidden relative">
-        <div className="w-full h-96 bg-gradient-to-r from-orange-100 to-yellow-100 flex items-center justify-center text-4xl font-bold text-orange-800 animate-pulse">
+        <motion.div
+          className="w-full h-96 bg-gradient-to-r from-orange-100 to-yellow-100 flex items-center justify-center text-4xl font-bold text-orange-800"
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
           Discover Your Next Favorite Book 📚
-        </div>
+        </motion.div>
       </section>
 
       {/* For Sale Books */}
       <section className="py-16 px-6">
-        <h3 className="text-4xl font-bold mb-10 text-center text-blue-800">Hot Arrivals (For Sale)</h3>
+        <motion.h3
+          className="text-4xl font-bold mb-10 text-center text-blue-800"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
+          Hot Arrivals (For Sale)
+        </motion.h3>
+
         <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {books.filter(book => book.bookType === "sell").slice(0, 4).length > 0 ? (
             books
               .filter(book => book.bookType === "sell")
               .slice(0, 4)
-              .map((book) => (
-                <div
+              .map((book, index) => (
+                <motion.div
                   key={book._id}
                   className="bg-white p-5 rounded-2xl shadow-xl hover:scale-105 transition transform duration-300 cursor-pointer relative"
                   onClick={() => navigate(`/book-details/${book._id}`)}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
                   <img
                     src={book.bookImage?.[0]}
@@ -81,7 +98,7 @@ export default function HomePage() {
 
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // prevent navigation
+                      e.stopPropagation();
                       handleToggleWishlist(book._id);
                     }}
                     className="mt-4 w-full flex items-center justify-center gap-2 bg-blue-500 text-white font-medium py-2 rounded-lg hover:bg-blue-600 transition"
@@ -89,7 +106,7 @@ export default function HomePage() {
                     {wishlist.includes(book._id) ? <FaHeart /> : <FaRegHeart />}
                     {wishlist.includes(book._id) ? "Remove from Wishlist" : "Add to Wishlist"}
                   </button>
-                </div>
+                </motion.div>
               ))
           ) : (
             <p className="col-span-full text-center text-gray-600 text-lg">No books for sale at the moment.</p>
@@ -112,9 +129,14 @@ export default function HomePage() {
 }
 
 const Feature = ({ icon, title, text }) => (
-  <div>
+  <motion.div
+    initial={{ opacity: 0, scale: 0.9 }}
+    whileInView={{ opacity: 1, scale: 1 }}
+    viewport={{ once: true, amount: 0.3 }}
+    transition={{ duration: 0.5 }}
+  >
     <div className="text-5xl mb-4">{icon}</div>
     <h4 className="font-bold text-lg mb-1">{title}</h4>
     <p className="text-sm text-gray-600">{text}</p>
-  </div>
+  </motion.div>
 );

@@ -15,6 +15,7 @@ import BookDetails from "../pages/BookDetails.jsx"
 import PublicUserProfile from "../pages/PublicUserProfile.jsx"
 import ResetPassword from "../pages/ResetPassword.jsx"
 import VerifyEmail from "../pages/VerifyEmail.jsx"
+import UserDashboard from "../components/UserDashboard.jsx"
 
 const router = createBrowserRouter([
     {
@@ -88,6 +89,10 @@ const router = createBrowserRouter([
                     {
                         path: "user-settings",
                         element: <UserSettings/>
+                    },
+                    {
+                        index: true,
+                        element: <UserDashboard />
                     },
                     {
                         path: "user-uploads",

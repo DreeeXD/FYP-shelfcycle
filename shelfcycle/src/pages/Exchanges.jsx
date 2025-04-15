@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { setWishlist, toggleWishlistItem } from '../store/wishlistSlice';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Exchanges = () => {
   const [openAddBookListing, setOpenAddBookListing] = useState(false);
@@ -93,7 +94,7 @@ const Exchanges = () => {
     ),
     exchangeSort
   );
-  
+
   const saleBooks = sortBooks(
     allBooks.filter(
       book =>
@@ -153,8 +154,6 @@ const Exchanges = () => {
   );
 };
 
-// ============================
-
 const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refValue, onWishlist, wishlist }) => {
   const getMaxHeight = (showMore, totalItems) => {
     const itemHeight = 500;
@@ -185,14 +184,23 @@ const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refVa
         style={{ maxHeight: getMaxHeight(showMore, books.length) }}
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-          {(showMore ? books : books.slice(0, 4)).map((book) => (
-            <BookCard
-              key={book._id}
-              book={book}
-              onWishlist={onWishlist}
-              isWishlisted={wishlist.includes(book._id)}
-            />
-          ))}
+          <AnimatePresence>
+            {(showMore ? books : books.slice(0, 4)).map((book) => (
+              <motion.div
+                key={book._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <BookCard
+                  book={book}
+                  onWishlist={onWishlist}
+                  isWishlisted={wishlist.includes(book._id)}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -209,8 +217,6 @@ const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refVa
     </section>
   );
 };
-
-// ============================
 
 const BookCard = ({ book, onWishlist, isWishlisted }) => {
   return (
@@ -256,8 +262,6 @@ const BookCard = ({ book, onWishlist, isWishlisted }) => {
     </div>
   );
 };
-
-// ============================
 
 BookCard.propTypes = {
   book: PropTypes.object.isRequired,
