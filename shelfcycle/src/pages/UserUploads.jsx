@@ -173,15 +173,15 @@ const UserUploads = () => {
 
                 {/* Book Status Dropdown */}
                 <div className="mt-2">
-                  <select
-                    value={book.bookStatus || 'available'}
-                    onChange={(e) => handleStatusChange(book._id, e.target.value)}
-                    className="text-sm border rounded px-2 py-1 mt-1"
-                  >
-                    <option value="available">Available</option>
-                    <option value="sold">Sold</option>
-                    <option value="exchanged">Exchanged</option>
-                  </select>
+                <select
+                  value={book.bookStatus === 'sold' ? 'sold' : 'available'}
+                  onChange={(e) => handleStatusChange(book._id, e.target.value)}
+                  className="text-sm border rounded px-2 py-1 mt-1"
+                >
+                  <option value="available">Available</option>
+                  <option value="sold">Sold</option>
+                </select>
+
                 </div>
               </div>
             </div>

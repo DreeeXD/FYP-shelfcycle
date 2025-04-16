@@ -130,6 +130,8 @@ const ChatPage = () => {
       timestamp: new Date(),
     };
 
+    setCurrentMsg("");
+
     try {
       const res = await fetch(SummaryAPI.sendMessage.url, {
         method: "POST",
@@ -139,8 +141,7 @@ const ChatPage = () => {
       });
 
       const savedMsg = await res.json();
-      setMessages((prev) => [...prev, savedMsg]);
-      setCurrentMsg("");
+      socket.emit("send_message", savedMsg);
     } catch (err) {
       console.error("Send failed", err);
     }
@@ -244,9 +245,7 @@ const ChatPage = () => {
             >
               <div
                 className={`px-4 py-2 rounded-2xl text-sm max-w-xs ${
-                  msg.sender === user._id
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-800"
+                  msg.sender === user._id ? "bg-blue-500 text-white" : "bg-white text-gray-800"
                 }`}
               >
                 <p>{msg.text}</p>

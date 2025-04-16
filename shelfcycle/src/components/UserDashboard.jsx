@@ -3,12 +3,13 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 import SummaryAPI from '../common';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const UserDashboard = () => {
   const user = useSelector((state) => state?.user?.user);
-  const books = useSelector((state) => state?.book?.books);
   const [userData, setUserData] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [recentBooks, setRecentBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchUserProfile = async () => {
@@ -33,17 +34,30 @@ const UserDashboard = () => {
     }
   };
 
+  const fetchRecentUploads = async () => {
+    try {
+      const res = await fetch(SummaryAPI.myUploads.url, {
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (data.success) {
+        const sorted = data.data
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 4);
+        setRecentBooks(sorted);
+      }
+    } catch (err) {
+      console.error('Error fetching recent uploads:', err);
+    }
+  };
+
   useEffect(() => {
     if (user?._id) {
       fetchUserProfile();
       fetchReviews();
+      fetchRecentUploads();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
-
-  const userUploads = books?.filter(
-    (book) => String(book.uploadedBy) === String(user?._id)
-  )?.slice(0, 4) || [];
 
   const animatedRating =
     userData?.averageRating && !isNaN(Number(userData.averageRating))
@@ -134,24 +148,35 @@ const UserDashboard = () => {
 
         {/* Recent Uploads */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Recent Uploads</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold text-gray-800">Recent Uploads</h3>
+            <Link
+              to="/user-profile/user-uploads"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              See All
+            </Link>
+          </div>
+
           <div className="grid sm:grid-cols-2 gap-4">
-            {userUploads.length > 0 ? (
-              userUploads.map((book, index) => (
+            {recentBooks.length > 0 ? (
+              recentBooks.map((book, index) => (
                 <motion.div
                   key={book._id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-white border rounded-lg shadow-sm p-4"
+                  className="bg-white border rounded-lg shadow-sm overflow-hidden"
                 >
                   <img
                     src={book.bookImage?.[0] || '/default-book.png'}
                     alt={book.bookTitle}
-                    className="w-full h-40 object-cover rounded mb-2"
+                    className="w-full h-48 object-cover"
                   />
-                  <h4 className="text-gray-800 font-semibold text-md">{book.bookTitle}</h4>
-                  <p className="text-sm text-gray-500">{moment(book.createdAt).format('ll')}</p>
+                  <div className="p-3">
+                    <h4 className="text-gray-800 font-semibold text-md truncate">{book.bookTitle}</h4>
+                    <p className="text-sm text-gray-500">{moment(book.createdAt).format('ll')}</p>
+                  </div>
                 </motion.div>
               ))
             ) : (

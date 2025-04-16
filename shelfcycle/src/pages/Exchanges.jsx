@@ -178,30 +178,26 @@ const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refVa
         </select>
       </div>
 
-      <div
-        ref={refValue}
-        className="transition-all duration-700 ease-in-out overflow-hidden"
-        style={{ maxHeight: getMaxHeight(showMore, books.length) }}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-          <AnimatePresence>
-            {(showMore ? books : books.slice(0, 4)).map((book) => (
-              <motion.div
-                key={book._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                <BookCard
-                  book={book}
-                  onWishlist={onWishlist}
-                  isWishlisted={wishlist.includes(book._id)}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+      <div className="w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
+        <AnimatePresence>
+          {(showMore ? books : books.slice(0, 4)).map((book) => (
+            <motion.div
+              key={book._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <BookCard
+                book={book}
+                onWishlist={onWishlist}
+                isWishlisted={wishlist.includes(book._id)}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
       </div>
 
       {books.length > 4 && (
@@ -220,10 +216,11 @@ const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refVa
 
 const BookCard = ({ book, onWishlist, isWishlisted }) => {
   return (
-    <div className="relative w-full">
+    <div className="relative w-full h-full flex flex-col">
+
       <Link
         to={`/book-details/${book._id}`}
-        className="block w-full bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 p-4 hover:scale-[1.02] duration-300 ease-in-out"
+        className="flex-1 flex flex-col justify-between bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 p-4 hover:scale-[1.02] duration-300 ease-in-out"
       >
         <div className={`absolute top-2 right-2 px-3 py-1 text-xs rounded-full font-medium drop-shadow ${
           book.bookType === 'sell' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'

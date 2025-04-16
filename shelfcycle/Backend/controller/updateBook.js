@@ -12,7 +12,16 @@ const updateBookController = async (req, res) => {
       });
     }
 
-    // Optional: Validate bookType logic here like in uploadBookController
+    
+    if (updateData.bookStatus && updateData.bookStatus === "exchanged") {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Invalid book status: 'exchanged' is no longer allowed.",
+      });
+    }
+
+    // Optional: still nullify price if it's an exchange book
     if (updateData.bookType === "exchange") {
       updateData.bookPrice = null;
     }
