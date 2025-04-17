@@ -13,8 +13,25 @@ import socket from './helpers/socket';
 function App() {
   const dispatch = useDispatch();
   const location = useLocation();
+  const [socketReady, setSocketReady] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
 
-  const [socketReady, setSocketReady] = useState(false); 
+  const toggleDarkMode = () => {
+    const isDark = !darkMode;
+    setDarkMode(isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  };
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (darkMode) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   const fetchUserDetails = async () => {
     try {
@@ -38,13 +55,10 @@ function App() {
       if (dataAPI.success) {
         dispatch(setUserDetails(dataAPI.data));
 
-        // ✅ Connect and set up socket
         if (!socket.connected) socket.connect();
         socket.emit("setup", dataAPI.data._id);
-        setSocketReady(true); // ✅ Only after socket is ready
+        setSocketReady(true);
       }
-
-      console.log("User data", dataAPI);
     } catch (error) {
       console.error("User fetch error:", error);
     }
@@ -57,13 +71,17 @@ function App() {
   const hideFooterRoutes = ['/chat'];
 
   return (
-    <Context.Provider value={{ fetchUserDetails }}>
-      <ToastContainer />
-      <Header socket={socketReady ? socket : null} />
-      <main>
-        <Outlet />
-      </main>
-      {!hideFooterRoutes.includes(location.pathname) && <Footer />}
+    <Context.Provider value={{ fetchUserDetails, darkMode, toggleDarkMode }}>
+      <div className="min-h-screen bg-white text-black dark:bg-gray-900 dark:text-white transition-colors duration-300">
+        <ToastContainer />
+        <Header socket={socketReady ? socket : null} />
+
+        <main>
+          <Outlet />
+        </main>
+
+        {!hideFooterRoutes.includes(location.pathname) && <Footer />}
+      </div>
     </Context.Provider>
   );
 }

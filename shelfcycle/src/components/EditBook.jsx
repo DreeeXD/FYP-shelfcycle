@@ -78,22 +78,24 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-40 backdrop-blur-sm px-4 py-8">
-      <div className="relative bg-white rounded-lg w-full max-w-lg max-h-[90vh] shadow-lg overflow-hidden">
-        {/* Scrollable content */}
+      <div className="relative bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-lg w-full max-w-lg max-h-[90vh] shadow-lg overflow-hidden transition-colors duration-300">
         <div className="overflow-y-auto max-h-[calc(90vh-2rem)] p-6">
           <button
-            className="absolute top-3 right-3 text-gray-600 hover:text-red-500 transition"
+            className="absolute top-3 right-3 text-gray-600 dark:text-gray-300 hover:text-red-500 transition"
             onClick={onClose}
           >
             <IoMdClose size={24} />
           </button>
 
-          <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">Edit Book Details</h2>
+          <h2 className="text-2xl font-bold text-center text-blue-700 dark:text-blue-400 mb-6">
+            Edit Book Details
+          </h2>
 
           <form className="flex flex-col gap-4" onSubmit={handleUploadBook}>
-            {/* Book Type */}
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Book Type</label>
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-200 block mb-1">
+                Book Type
+              </label>
               <div className="flex gap-6">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -118,7 +120,6 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
               </div>
             </div>
 
-            {/* Dynamic Fields */}
             {[
               { id: "bookTitle", label: "Title" },
               { id: "bookAuthor", label: "Author" },
@@ -126,7 +127,10 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
               { id: "bookCategory", label: "Category" },
             ].map(({ id, label }) => (
               <div key={id}>
-                <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor={id}
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+                >
                   {label}
                 </label>
                 <input
@@ -135,14 +139,16 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
                   value={data[id]}
                   required
                   onChange={handleOnChange}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                 />
               </div>
             ))}
 
-            {/* Description */}
             <div>
-              <label htmlFor="bookDescription" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="bookDescription"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+              >
                 Description
               </label>
               <textarea
@@ -151,14 +157,16 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
                 value={data.bookDescription}
                 required
                 onChange={handleOnChange}
-                className="w-full p-2 border rounded-md resize-none h-24"
+                className="w-full p-2 border rounded-md resize-none h-24 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
               />
             </div>
 
-            {/* Price */}
             {data.bookType === "sell" && (
               <div>
-                <label htmlFor="bookPrice" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="bookPrice"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+                >
                   Price ($)
                 </label>
                 <input
@@ -167,23 +175,26 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
                   name="bookPrice"
                   value={data.bookPrice}
                   onChange={handleOnChange}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                   required
                 />
               </div>
             )}
 
-            {/* Image Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Images</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Images
+              </label>
               <input
                 type="file"
                 multiple
                 accept="image/*"
                 onChange={handleUploadProduct}
-                className="w-full text-sm p-2 border rounded-md"
+                className="w-full text-sm p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-white"
               />
-              {uploading && <p className="text-blue-500 text-sm mt-1">Uploading...</p>}
+              {uploading && (
+                <p className="text-blue-500 text-sm mt-1">Uploading...</p>
+              )}
               <div className="flex gap-3 flex-wrap mt-2">
                 {data.bookImage.map((img, i) => (
                   <div key={i} className="relative group">
@@ -207,11 +218,10 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
               </div>
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={uploading}
-              className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition"
             >
               {uploading ? "Updating..." : "Update"}
             </button>
@@ -219,9 +229,11 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
         </div>
       </div>
 
-      {/* Enlarged Image */}
       {openImageEnlarge && (
-        <ImageDisplay onClose={() => setOpenImageEnlarge(false)} ImageUrl={imageEnlarge} />
+        <ImageDisplay
+          onClose={() => setOpenImageEnlarge(false)}
+          ImageUrl={imageEnlarge}
+        />
       )}
     </div>
   );

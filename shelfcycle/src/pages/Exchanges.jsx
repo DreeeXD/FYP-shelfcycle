@@ -107,10 +107,12 @@ const Exchanges = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800">
       <header className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg px-4 md:px-8 py-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          <h1 className="text-2xl font-bold tracking-wide text-center sm:text-left">Book Exchange Platform</h1>
+          <h1 className="text-2xl font-bold tracking-wide text-center sm:text-left">
+            Book Exchange Platform
+          </h1>
           <button
             onClick={() => setOpenAddBookListing(true)}
             className="bg-white text-blue-700 font-semibold px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 hover:text-white transition-all duration-300"
@@ -163,13 +165,13 @@ const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refVa
   };
 
   return (
-    <section className="px-6 py-6 bg-white shadow-inner rounded-md my-6 mx-4 md:mx-12">
+    <section className="px-6 py-6 bg-white dark:bg-gray-900 shadow-inner rounded-md my-6 mx-4 md:mx-12">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{title}</h2>
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value)}
-          className="border rounded-md px-3 py-1 shadow text-sm"
+          className="border rounded-md px-3 py-1 shadow text-sm bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
         >
           <option value="newest">Sort: Newest</option>
           <option value="oldest">Sort: Oldest</option>
@@ -179,25 +181,25 @@ const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refVa
       </div>
 
       <div className="w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
-        <AnimatePresence>
-          {(showMore ? books : books.slice(0, 4)).map((book) => (
-            <motion.div
-              key={book._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              <BookCard
-                book={book}
-                onWishlist={onWishlist}
-                isWishlisted={wishlist.includes(book._id)}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
+          <AnimatePresence>
+            {(showMore ? books : books.slice(0, 4)).map((book) => (
+              <motion.div
+                key={book._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <BookCard
+                  book={book}
+                  onWishlist={onWishlist}
+                  isWishlisted={wishlist.includes(book._id)}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
 
       {books.length > 4 && (
@@ -217,14 +219,17 @@ const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refVa
 const BookCard = ({ book, onWishlist, isWishlisted }) => {
   return (
     <div className="relative w-full h-full flex flex-col">
-
       <Link
         to={`/book-details/${book._id}`}
-        className="flex-1 flex flex-col justify-between bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 p-4 hover:scale-[1.02] duration-300 ease-in-out"
+        className="flex-1 flex flex-col justify-between bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 dark:border-gray-700 p-4 hover:scale-[1.02] duration-300 ease-in-out"
       >
-        <div className={`absolute top-2 right-2 px-3 py-1 text-xs rounded-full font-medium drop-shadow ${
-          book.bookType === 'sell' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'
-        }`}>
+        <div
+          className={`absolute top-2 right-2 px-3 py-1 text-xs rounded-full font-medium drop-shadow ${
+            book.bookType === 'sell'
+              ? 'bg-green-200 text-green-800 dark:bg-green-300/10 dark:text-green-400'
+              : 'bg-yellow-200 text-yellow-800 dark:bg-yellow-300/10 dark:text-yellow-400'
+          }`}
+        >
           {book.bookType === 'sell' ? 'For Sale' : 'For Exchange'}
         </div>
 
@@ -237,10 +242,14 @@ const BookCard = ({ book, onWishlist, isWishlisted }) => {
         </div>
 
         <div className="mt-4 px-2 flex flex-col gap-1 text-center">
-          <h2 className="font-semibold text-lg text-gray-900 truncate">{book.bookTitle}</h2>
-          <p className="text-sm text-gray-600 truncate">by {book.bookAuthor}</p>
+          <h2 className="font-semibold text-lg text-gray-900 dark:text-white truncate">
+            {book.bookTitle}
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 truncate">by {book.bookAuthor}</p>
           {book.bookType === 'sell' && (
-            <p className="text-md font-bold text-blue-600 mt-2">$ {book.bookPrice}</p>
+            <p className="text-md font-bold text-blue-600 dark:text-blue-400 mt-2">
+              $ {book.bookPrice}
+            </p>
           )}
         </div>
       </Link>
@@ -253,7 +262,7 @@ const BookCard = ({ book, onWishlist, isWishlisted }) => {
         {isWishlisted ? (
           <FaHeart className="text-red-500" />
         ) : (
-          <FaRegHeart className="text-gray-400 hover:text-red-500" />
+          <FaRegHeart className="text-gray-400 hover:text-red-500 dark:hover:text-red-400" />
         )}
       </button>
     </div>

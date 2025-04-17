@@ -78,20 +78,20 @@ const AddBookForListing = ({ onClose, onBookAdded }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-40 backdrop-blur-sm px-4 py-8 overflow-auto">
-      <div className="relative bg-white rounded-lg w-full max-w-2xl shadow-lg p-6 animate-fadeIn">
+      <div className="relative bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-lg w-full max-w-2xl shadow-lg p-6 transition-colors duration-300">
         <button
-          className="absolute top-3 right-3 text-gray-600 hover:text-red-500 transition"
+          className="absolute top-3 right-3 text-gray-600 dark:text-gray-300 hover:text-red-500 transition"
           onClick={onClose}
         >
           <IoMdClose size={24} />
         </button>
 
-        <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">Add Book</h2>
+        <h2 className="text-2xl font-bold text-center text-blue-700 dark:text-blue-400 mb-6">Add Book</h2>
 
         <form className="flex flex-col gap-4" onSubmit={handleUploadBook}>
           {/* Book Type */}
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Book Type</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-1">Book Type</label>
             <div className="flex gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -116,6 +116,7 @@ const AddBookForListing = ({ onClose, onBookAdded }) => {
             </div>
           </div>
 
+          {/* Common Inputs */}
           {[
             { id: "bookTitle", label: "Title" },
             { id: "bookAuthor", label: "Author" },
@@ -123,7 +124,7 @@ const AddBookForListing = ({ onClose, onBookAdded }) => {
             { id: "bookCategory", label: "Category" },
           ].map(({ id, label }) => (
             <div key={id}>
-              <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {label}
               </label>
               <input
@@ -132,14 +133,14 @@ const AddBookForListing = ({ onClose, onBookAdded }) => {
                 value={data[id]}
                 required
                 onChange={handleOnChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
           ))}
 
           {/* Description */}
           <div>
-            <label htmlFor="bookDescription" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="bookDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Description
             </label>
             <textarea
@@ -148,14 +149,14 @@ const AddBookForListing = ({ onClose, onBookAdded }) => {
               value={data.bookDescription}
               required
               onChange={handleOnChange}
-              className="w-full p-2 border rounded-md resize-none h-24"
+              className="w-full p-2 border rounded-md resize-none h-24 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
             />
           </div>
 
           {/* Price */}
           {data.bookType === "sell" && (
             <div>
-              <label htmlFor="bookPrice" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="bookPrice" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Price ($)
               </label>
               <input
@@ -164,7 +165,7 @@ const AddBookForListing = ({ onClose, onBookAdded }) => {
                 name="bookPrice"
                 value={data.bookPrice}
                 onChange={handleOnChange}
-                className="w-full p-2 border rounded-md"
+                className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                 required
               />
             </div>
@@ -172,13 +173,13 @@ const AddBookForListing = ({ onClose, onBookAdded }) => {
 
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Images</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Images</label>
             <input
               type="file"
               multiple
               accept="image/*"
               onChange={handleUploadProduct}
-              className="w-full text-sm p-2 border rounded-md"
+              className="w-full text-sm p-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-100"
             />
             {uploading && <p className="text-blue-500 text-sm mt-1">Uploading...</p>}
             <div className="flex gap-3 flex-wrap mt-2">
@@ -208,7 +209,7 @@ const AddBookForListing = ({ onClose, onBookAdded }) => {
           <button
             type="submit"
             disabled={uploading}
-            className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition"
           >
             {uploading ? "Uploading..." : "Submit"}
           </button>

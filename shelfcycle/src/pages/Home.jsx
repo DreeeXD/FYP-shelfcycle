@@ -49,11 +49,11 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-[#fff8f3] text-[#2b1e17] font-sans">
+    <div className="bg-[#fff8f3] dark:bg-gray-900 text-[#2b1e17] dark:text-white font-sans transition-colors duration-300">
       {/* Hero Banner */}
       <section className="w-full overflow-hidden relative">
         <motion.div
-          className="w-full h-96 bg-gradient-to-r from-orange-100 to-yellow-100 flex items-center justify-center text-4xl font-bold text-orange-800"
+          className="w-full h-96 bg-gradient-to-r from-orange-100 to-yellow-100 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center text-4xl font-bold text-orange-800 dark:text-yellow-300"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -65,7 +65,7 @@ export default function HomePage() {
       {/* For Sale Books */}
       <section className="py-16 px-6">
         <motion.h3
-          className="text-4xl font-bold mb-10 text-center text-blue-800"
+          className="text-4xl font-bold mb-10 text-center text-blue-800 dark:text-blue-400"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
@@ -81,7 +81,7 @@ export default function HomePage() {
               .map((book, index) => (
                 <motion.div
                   key={book._id}
-                  className="bg-white p-5 rounded-2xl shadow-xl hover:scale-105 transition transform duration-300 cursor-pointer relative"
+                  className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-xl hover:scale-105 transition transform duration-300 cursor-pointer relative"
                   onClick={() => navigate(`/book-details/${book._id}`)}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -93,8 +93,8 @@ export default function HomePage() {
                     className="h-48 w-full object-cover rounded-xl mb-4 border"
                   />
                   <h4 className="text-lg font-bold mb-1 truncate">{book.bookTitle}</h4>
-                  <p className="text-sm text-gray-500 mb-2 truncate">{book.bookAuthor}</p>
-                  <div className="text-blue-600 font-bold text-lg">$ {book.bookPrice}</div>
+                  <p className="text-sm text-gray-500 dark:text-gray-300 mb-2 truncate">{book.bookAuthor}</p>
+                  <div className="text-blue-600 dark:text-blue-400 font-bold text-lg">$ {book.bookPrice}</div>
 
                   <button
                     onClick={(e) => {
@@ -109,14 +109,14 @@ export default function HomePage() {
                 </motion.div>
               ))
           ) : (
-            <p className="col-span-full text-center text-gray-600 text-lg">No books for sale at the moment.</p>
+            <p className="col-span-full text-center text-gray-600 dark:text-gray-300 text-lg">No books for sale at the moment.</p>
           )}
         </div>
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-20 px-6 bg-white border-t border-orange-100">
-        <h3 className="text-3xl font-bold mb-10 text-center text-[#2b1e17]">Why Choose ShelfCycle?</h3>
+      <section className="py-20 px-6 bg-white dark:bg-gray-800 border-t border-orange-100 dark:border-gray-700">
+        <h3 className="text-3xl font-bold mb-10 text-center text-[#2b1e17] dark:text-white">Why Choose ShelfCycle?</h3>
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4 text-center">
           <Feature icon="♻️" title="Sustainable Reading" text="Give pre-loved books a new home and reduce waste." />
           <Feature icon="💰" title="Affordable Prices" text="Buy and sell books at fair and friendly prices." />
@@ -137,6 +137,6 @@ const Feature = ({ icon, title, text }) => (
   >
     <div className="text-5xl mb-4">{icon}</div>
     <h4 className="font-bold text-lg mb-1">{title}</h4>
-    <p className="text-sm text-gray-600">{text}</p>
+    <p className="text-sm text-gray-600 dark:text-gray-300">{text}</p>
   </motion.div>
 );

@@ -166,26 +166,27 @@ const ChatPage = () => {
 
   if (!user) {
     return (
-      <div className="h-screen flex justify-center items-center text-gray-600">
+      <div className="h-screen flex justify-center items-center text-gray-600 dark:text-gray-300">
         Login to chat
       </div>
     );
   }
 
   return (
-    <div className="flex h-[calc(100vh-100px)] bg-gray-100 rounded overflow-hidden shadow-md border">
+    <div className="flex h-[calc(100vh-100px)] bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded overflow-hidden shadow-md border dark:border-gray-700">
       {/* Sidebar */}
-      <div className="w-1/4 bg-white border-r flex flex-col">
+      <div className="w-1/4 bg-white dark:bg-gray-800 border-r dark:border-gray-700 flex flex-col">
         <UserSearchDropdown onUserSelect={handleUserSelect} />
         <div className="flex-1 overflow-y-auto px-4 pb-3">
-          <h2 className="text-lg font-semibold mb-3 text-gray-700">Chats</h2>
+          <h2 className="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-200">Chats</h2>
           {chatUsers.map((u) => (
             <div
               key={u._id}
               onClick={() => handleUserSelect(u)}
-              className={`relative flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer hover:bg-blue-100 ${
-                selectedUser?._id === u._id ? "bg-blue-200" : ""
-              }`}
+              className={`relative flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer 
+                ${selectedUser?._id === u._id
+                  ? "bg-blue-200 dark:bg-blue-800"
+                  : "hover:bg-blue-100 dark:hover:bg-gray-700"}`}
             >
               {u.uploadPic ? (
                 <img
@@ -198,9 +199,7 @@ const ChatPage = () => {
                   {u.username[0]}
                 </div>
               )}
-              <span className="text-sm font-medium text-gray-800 truncate">
-                {u.username}
-              </span>
+              <span className="text-sm font-medium truncate">{u.username}</span>
               {unreadMap[u._id] > 0 && (
                 <div className="absolute right-3 bg-blue-600 text-white text-xs rounded-full px-2 py-0.5">
                   {unreadMap[u._id]}
@@ -214,7 +213,7 @@ const ChatPage = () => {
       {/* Chat Window */}
       <div className="w-3/4 flex flex-col">
         {/* Header */}
-        <div className="p-4 bg-white border-b shadow flex items-center gap-3">
+        <div className="p-4 bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow flex items-center gap-3">
           {selectedUser ? (
             <>
               {selectedUser.uploadPic ? (
@@ -226,26 +225,31 @@ const ChatPage = () => {
               )}
               <Link
                 to={`/user/${selectedUser._id}`}
-                className="text-xl font-bold text-blue-700 hover:underline"
+                className="text-xl font-bold text-blue-700 dark:text-blue-400 hover:underline"
               >
                 {selectedUser.username}
               </Link>
             </>
           ) : (
-            <p className="text-gray-500">Select a user to start chatting</p>
+            <p className="text-gray-500 dark:text-gray-400">Select a user to start chatting</p>
           )}
         </div>
 
         {/* Messages */}
-        <div ref={chatBoxRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+        <div
+          ref={chatBoxRef}
+          className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 dark:bg-gray-900"
+        >
           {messages.map((msg, index) => (
             <div
               key={msg._id || index}
               className={`flex ${msg.sender === user._id ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`px-4 py-2 rounded-2xl text-sm max-w-xs ${
-                  msg.sender === user._id ? "bg-blue-500 text-white" : "bg-white text-gray-800"
+                className={`px-4 py-2 rounded-2xl text-sm max-w-xs break-words ${
+                  msg.sender === user._id
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-800 dark:bg-gray-700 dark:text-gray-200"
                 }`}
               >
                 <p>{msg.text}</p>
@@ -257,21 +261,21 @@ const ChatPage = () => {
             </div>
           ))}
           {partnerTyping && (
-            <p className="text-xs text-gray-500 ml-2">Typing...</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 ml-2">Typing...</p>
           )}
         </div>
 
         {/* Footer */}
         {selectedUser && (
-          <div className="p-4 bg-white border-t">
-            <div className="flex items-center bg-gray-100 px-4 py-2 rounded-full">
+          <div className="p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700">
+            <div className="flex items-center bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-full">
               <input
                 type="text"
                 placeholder="Type a message..."
                 value={currentMsg}
                 onChange={handleTyping}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                className="flex-1 bg-transparent outline-none text-sm px-2"
+                className="flex-1 bg-transparent outline-none text-sm px-2 text-gray-800 dark:text-white"
               />
               <button
                 onClick={handleSend}

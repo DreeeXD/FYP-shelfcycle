@@ -65,18 +65,18 @@ const BookDetails = () => {
 
   if (!book) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-600">
+      <div className="min-h-screen flex items-center justify-center text-gray-600 dark:text-gray-300">
         Loading book details...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4 py-8">
-      <div className="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6 grid md:grid-cols-2 gap-8">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 px-4 py-8">
+      <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 grid md:grid-cols-2 gap-8">
         {/* Image Section */}
         <div>
-          <div className="w-full h-[400px] border rounded-md flex items-center justify-center bg-gray-50 mb-4">
+          <div className="w-full h-[400px] border rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-700 mb-4">
             <img src={selectedImage} alt="Book" className="object-contain h-full" />
           </div>
           <div className="flex gap-3">
@@ -96,11 +96,11 @@ const BookDetails = () => {
 
         {/* Details Section */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-bold text-gray-800">{book.bookTitle}</h1>
-          <p className="text-sm text-gray-500">by {book.bookAuthor}</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{book.bookTitle}</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">by {book.bookAuthor}</p>
 
           {book.owner && (
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Uploaded by{" "}
               <span
                 className="text-blue-600 hover:underline cursor-pointer"
@@ -128,11 +128,13 @@ const BookDetails = () => {
           </div>
 
           <div className="mt-3">
-            <h3 className="text-md font-semibold text-gray-800 mb-1">Description</h3>
-            <p className="text-sm text-gray-700">{book.bookDescription || "No description provided."}</p>
+            <h3 className="text-md font-semibold text-gray-800 dark:text-white mb-1">Description</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              {book.bookDescription || "No description provided."}
+            </p>
           </div>
 
-          <div className="text-sm text-gray-600 mt-3">
+          <div className="text-sm text-gray-600 dark:text-gray-400 mt-3">
             <p>
               Posted on:{" "}
               <span className="font-medium">{moment(book.createdAt).format("LL")}</span>
@@ -141,26 +143,29 @@ const BookDetails = () => {
 
           {/* Seller Info */}
           {book.uploadedBy && (
-          <div className="mt-4 border-t pt-4">
-            <h3 className="font-semibold text-gray-800 mb-1">Uploaded by</h3>
-            <p className="text-sm text-gray-700">Name: {book.uploadedBy.username}</p>
-            <p className="text-sm text-gray-700">Email: {book.uploadedBy.email}</p>
-            {book.uploadedBy.phone && (
-              <p className="text-sm text-gray-700">Phone: {book.uploadedBy.phone}</p>
-            )}
-            {book.uploadedBy.averageRating && (
-            <p className="text-sm text-yellow-600">
-            ⭐ Average Rating: {book.uploadedBy.averageRating}
-            </p>
-            )}
-          </div>
+            <div className="mt-4 border-t pt-4 border-gray-300 dark:border-gray-600">
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-1">Uploaded by</h3>
+              <p className="text-sm text-gray-700 dark:text-gray-300">Name: {book.uploadedBy.username}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300">Email: {book.uploadedBy.email}</p>
+              {book.uploadedBy.phone && (
+                <p className="text-sm text-gray-700 dark:text-gray-300">Phone: {book.uploadedBy.phone}</p>
+              )}
+              {book.uploadedBy.averageRating && (
+                <p className="text-sm text-yellow-600">⭐ Average Rating: {book.uploadedBy.averageRating}</p>
+              )}
+            </div>
           )}
 
           {/* Action Buttons */}
           <div className="mt-6 flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleWishlistToggle}
-              className="flex-1 flex items-center justify-center gap-2 bg-pink-100 text-pink-600 border border-pink-300 px-4 py-2 rounded-full hover:bg-pink-200 transition text-sm"
+              className="flex-1 flex items-center justify-center gap-2 
+                bg-pink-100 text-pink-600 border border-pink-300 
+                px-4 py-2 rounded-full transition text-sm
+                hover:bg-pink-200 
+                dark:bg-pink-200/20 dark:text-pink-400 dark:border-pink-500 
+                dark:hover:bg-pink-300/30"
             >
               {isWishlisted ? <FaHeart /> : <FaRegHeart />}
               {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
@@ -168,14 +173,24 @@ const BookDetails = () => {
 
             <button
               onClick={handleMessage}
-              className="flex-1 bg-blue-100 text-blue-600 border border-blue-300 px-4 py-2 rounded-full hover:bg-blue-200 transition text-sm"
+              className="flex-1 
+                bg-blue-100 text-blue-600 border border-blue-300 
+                px-4 py-2 rounded-full transition text-sm 
+                hover:bg-blue-200 
+                dark:bg-blue-200/20 dark:text-blue-400 dark:border-blue-500 
+                dark:hover:bg-blue-300/30"
             >
               💬 Contact the Seller
             </button>
 
             <button
               onClick={handleGoBack}
-              className="flex-1 bg-gray-100 text-gray-600 border border-gray-300 px-4 py-2 rounded-full hover:bg-gray-200 transition text-sm"
+              className="flex-1 
+                bg-gray-100 text-gray-600 border border-gray-300 
+                px-4 py-2 rounded-full transition text-sm 
+                hover:bg-gray-200 
+                dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 
+                dark:hover:bg-gray-600"
             >
               ← Go Back
             </button>

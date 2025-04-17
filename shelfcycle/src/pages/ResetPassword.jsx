@@ -31,12 +31,12 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 border rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Reset Password</h2>
+    <div className="max-w-md mx-auto mt-20 p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow transition-all duration-300">
+      <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Reset Password</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="password"
-          className="w-full border px-3 py-2 rounded mb-3"
+          className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 px-3 py-2 rounded mb-3 text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
           placeholder="Enter new password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -44,7 +44,7 @@ const ResetPassword = () => {
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition"
         >
           Reset Password
         </button>

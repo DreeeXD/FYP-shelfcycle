@@ -56,22 +56,22 @@ const UserSearchDropdown = ({ onUserSelect }) => {
   };
 
   return (
-    <div className="relative px-4 py-3 border-b" ref={containerRef}>
+    <div className="relative px-4 py-3 border-b border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 transition-colors duration-300" ref={containerRef}>
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search users..."
-        className="w-full px-3 py-2 rounded-md border text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+        className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-sm text-gray-800 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
       />
 
       {showDropdown && suggestions.length > 0 && (
-        <div className="absolute z-50 top-full left-0 right-0 bg-white border shadow-md rounded-md mt-1 max-h-64 overflow-y-auto">
+        <div className="absolute z-50 top-full left-0 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 shadow-md rounded-md mt-1 max-h-64 overflow-y-auto">
           {suggestions.map((user) => (
             <div
               key={user._id}
               onClick={() => handleSelect(user)}
-              className="px-4 py-2 text-sm flex items-center gap-2 hover:bg-blue-100 cursor-pointer"
+              className="px-4 py-2 text-sm flex items-center gap-2 hover:bg-blue-100 dark:hover:bg-gray-700 cursor-pointer transition"
             >
               {user.uploadPic ? (
                 <img
@@ -84,7 +84,7 @@ const UserSearchDropdown = ({ onUserSelect }) => {
                   {user.username[0]}
                 </div>
               )}
-              <span className="truncate">{user.username}</span>
+              <span className="truncate text-gray-800 dark:text-white">{user.username}</span>
             </div>
           ))}
         </div>

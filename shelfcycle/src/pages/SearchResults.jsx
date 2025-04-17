@@ -79,7 +79,7 @@ const SearchResults = () => {
     const regex = new RegExp(`(${query})`, 'gi');
     return text.split(regex).map((part, i) =>
       part.toLowerCase() === query.toLowerCase() ? (
-        <span key={i} className="bg-yellow-200 font-semibold px-1 rounded">
+        <span key={i} className="bg-yellow-200 dark:bg-yellow-600/30 font-semibold px-1 rounded">
           {part}
         </span>
       ) : (
@@ -89,17 +89,17 @@ const SearchResults = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 px-6 py-8">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-6 py-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          Search Results for <span className="text-blue-600">"{query}"</span>
+        <h1 className="text-2xl font-bold mb-6">
+          Search Results for <span className="text-blue-600 dark:text-blue-400">"{query}"</span>
         </h1>
 
         <div className="flex justify-end mb-6">
           <select
             value={sortMethod}
             onChange={(e) => setSortMethod(e.target.value)}
-            className="border px-3 py-1 rounded shadow text-sm"
+            className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 py-1 rounded shadow text-sm"
           >
             <option value="newest">Sort by: Newest</option>
             <option value="oldest">Oldest</option>
@@ -109,8 +109,7 @@ const SearchResults = () => {
         </div>
 
         {filteredBooks.length === 0 ? (
-          <div className="text-center mt-20 text-gray-600">
-            
+          <div className="text-center mt-20 text-gray-600 dark:text-gray-400">
             <p>No books found matching your search.</p>
           </div>
         ) : (
@@ -118,7 +117,7 @@ const SearchResults = () => {
             {filteredBooks.map((book) => (
               <div
                 key={book._id}
-                className="relative bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition border hover:scale-[1.02]"
+                className="relative bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md hover:shadow-xl transition border border-gray-200 dark:border-gray-700 hover:scale-[1.02]"
               >
                 {/* Wishlist Icon */}
                 <button
@@ -135,8 +134,8 @@ const SearchResults = () => {
                   <div
                     className={`absolute top-2 right-2 px-3 py-1 text-xs rounded-full font-medium drop-shadow ${
                       book.bookType === 'sell'
-                        ? 'bg-green-200 text-green-800'
-                        : 'bg-yellow-200 text-yellow-800'
+                        ? 'bg-green-200 text-green-800 dark:bg-green-400/20 dark:text-green-300'
+                        : 'bg-yellow-200 text-yellow-800 dark:bg-yellow-400/20 dark:text-yellow-300'
                     }`}
                   >
                     {book.bookType === 'sell' ? 'For Sale' : 'For Exchange'}
@@ -153,14 +152,16 @@ const SearchResults = () => {
 
                   {/* Info */}
                   <div className="mt-4 px-2 flex flex-col gap-1 text-center">
-                    <h2 className="font-semibold text-lg text-gray-900 truncate">
+                    <h2 className="font-semibold text-lg text-gray-900 dark:text-white truncate">
                       {highlightMatch(book.bookTitle)}
                     </h2>
-                    <p className="text-sm text-gray-600 truncate">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
                       by {highlightMatch(book.bookAuthor)}
                     </p>
                     {book.bookType === 'sell' && (
-                      <p className="text-md font-bold text-blue-600 mt-2">$ {book.bookPrice}</p>
+                      <p className="text-md font-bold text-blue-600 dark:text-blue-400 mt-2">
+                        $ {book.bookPrice}
+                      </p>
                     )}
                   </div>
                 </Link>

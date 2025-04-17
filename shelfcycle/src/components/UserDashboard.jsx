@@ -66,27 +66,27 @@ const UserDashboard = () => {
 
   if (loading || !userData) {
     return (
-      <div className="min-h-screen flex justify-center items-center text-gray-500">
+      <div className="min-h-screen flex justify-center items-center text-gray-500 dark:text-gray-300">
         Loading dashboard...
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6 min-h-screen bg-gray-100">
-      <div className="bg-white shadow-md rounded-xl p-6 space-y-8">
+    <div className="max-w-5xl mx-auto p-6 min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 space-y-8 transition-colors duration-300">
 
         {/* Profile Info */}
         <div className="flex items-center gap-6">
           <img
             src={userData.uploadPic || '/default-profile.png'}
             alt={userData.username}
-            className="w-24 h-24 rounded-full object-cover border"
+            className="w-24 h-24 rounded-full object-cover border dark:border-gray-700"
           />
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">{userData.username}</h2>
-            <p className="text-sm text-gray-600">{userData.email}</p>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{userData.username}</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300">{userData.email}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Joined on {moment(userData.createdAt).format('LL')}
             </p>
             <p className="text-sm text-yellow-600 font-medium flex items-center mt-1">
@@ -104,7 +104,7 @@ const UserDashboard = () => {
                     {animatedRating}
                   </motion.span>
                 ) : (
-                  <span className="ml-1">No rating yet</span>
+                  <span className="ml-1 text-gray-400 dark:text-gray-500">No rating yet</span>
                 )}
               </AnimatePresence>
             </p>
@@ -113,46 +113,46 @@ const UserDashboard = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-4 bg-blue-50 rounded-lg text-center">
-            <p className="text-sm text-gray-600">Books Uploaded</p>
-            <p className="text-2xl font-bold text-blue-700">{userData.totalBooks || 0}</p>
+          <div className="p-4 bg-blue-50 dark:bg-blue-900 rounded-lg text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-300">Books Uploaded</p>
+            <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{userData.totalBooks || 0}</p>
           </div>
-          <div className="p-4 bg-green-50 rounded-lg text-center">
-            <p className="text-sm text-gray-600">Books Sold</p>
-            <p className="text-2xl font-bold text-green-700">{userData.booksSold || 0}</p>
+          <div className="p-4 bg-green-50 dark:bg-green-900 rounded-lg text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-300">Books Sold</p>
+            <p className="text-2xl font-bold text-green-700 dark:text-green-300">{userData.booksSold || 0}</p>
           </div>
         </div>
 
         {/* Reviews */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">User Reviews</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">User Reviews</h3>
           {reviews.length > 0 ? (
             <div className="space-y-4">
               {reviews.map((r) => (
-                <div key={r._id} className="bg-gray-50 border rounded p-4">
+                <div key={r._id} className="bg-gray-50 dark:bg-gray-700 border dark:border-gray-600 rounded p-4">
                   <div className="flex justify-between items-center mb-1">
-                    <p className="text-sm font-semibold text-gray-800">
+                    <p className="text-sm font-semibold text-gray-800 dark:text-white">
                       {r.reviewer?.username || 'User'}
                     </p>
-                    <p className="text-xs text-gray-500">{moment(r.createdAt).fromNow()}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{moment(r.createdAt).fromNow()}</p>
                   </div>
                   <p className="text-yellow-600 text-sm mb-1">{'★'.repeat(r.rating)}</p>
-                  <p className="text-sm text-gray-700">{r.comment}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{r.comment}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 italic">No reviews yet.</p>
+            <p className="text-gray-500 dark:text-gray-400 italic">No reviews yet.</p>
           )}
         </div>
 
         {/* Recent Uploads */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-gray-800">Recent Uploads</h3>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Recent Uploads</h3>
             <Link
               to="/user-profile/user-uploads"
-              className="text-sm text-blue-600 hover:underline"
+              className="text-sm text-blue-600 hover:underline dark:hover:text-blue-400"
             >
               See All
             </Link>
@@ -166,7 +166,7 @@ const UserDashboard = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-white border rounded-lg shadow-sm overflow-hidden"
+                  className="bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-lg shadow-sm overflow-hidden"
                 >
                   <img
                     src={book.bookImage?.[0] || '/default-book.png'}
@@ -174,13 +174,15 @@ const UserDashboard = () => {
                     className="w-full h-48 object-cover"
                   />
                   <div className="p-3">
-                    <h4 className="text-gray-800 font-semibold text-md truncate">{book.bookTitle}</h4>
-                    <p className="text-sm text-gray-500">{moment(book.createdAt).format('ll')}</p>
+                    <h4 className="text-gray-800 dark:text-white font-semibold text-md truncate">
+                      {book.bookTitle}
+                    </h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{moment(book.createdAt).format('ll')}</p>
                   </div>
                 </motion.div>
               ))
             ) : (
-              <p className="text-gray-500 italic col-span-full">No uploads yet.</p>
+              <p className="text-gray-500 dark:text-gray-400 italic col-span-full">No uploads yet.</p>
             )}
           </div>
         </div>

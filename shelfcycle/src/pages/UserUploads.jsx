@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import EditBook from '../components/EditBook';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { RiEditBoxLine, RiDeleteBinLine } from 'react-icons/ri';
+import { motion } from 'framer-motion';
 
 const UserUploads = () => {
   const [uploads, setUploads] = useState([]);
@@ -111,13 +112,13 @@ const UserUploads = () => {
   });
 
   return (
-    <div className="mt-10">
+    <div className="mt-10 transition-colors duration-300 text-gray-800 dark:text-gray-100">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-bold">My Uploads</h3>
         <select
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
-          className="border px-3 py-2 rounded text-sm bg-white shadow-sm"
+          className="border dark:border-gray-600 bg-white dark:bg-gray-700 text-sm rounded px-3 py-2 shadow-sm"
         >
           <option value="newest">📅 Date Added (Newest)</option>
           <option value="oldest">📅 Date Added (Oldest)</option>
@@ -131,13 +132,16 @@ const UserUploads = () => {
       {loading ? (
         <p>Loading your books...</p>
       ) : sortedBooks.length === 0 ? (
-        <p className="text-gray-500">You haven’t uploaded any books yet.</p>
+        <p className="text-gray-500 dark:text-gray-400">You haven’t uploaded any books yet.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {sortedBooks.map((book) => (
-            <div
+          {sortedBooks.map((book, index) => (
+            <motion.div
               key={book._id}
-              className="relative w-full flex flex-col bg-white rounded-xl shadow-md hover:shadow-lg border transition-transform p-4 hover:scale-[1.02]"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="relative w-full flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg border dark:border-gray-700 transition-transform p-4 hover:scale-[1.02]"
             >
               <div className="absolute top-2 right-2 flex gap-2 z-10">
                 <button
@@ -165,26 +169,24 @@ const UserUploads = () => {
               </div>
 
               <div className="mt-4 px-2 text-center space-y-1">
-                <h4 className="text-lg font-semibold text-gray-800 truncate">{book.bookTitle}</h4>
-                <p className="text-sm text-gray-600 truncate">by {book.bookAuthor}</p>
+                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 truncate">{book.bookTitle}</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 truncate">by {book.bookAuthor}</p>
                 <p className={`text-sm font-medium ${book.bookType === 'sell' ? 'text-blue-600' : 'text-yellow-600'}`}>
                   {book.bookType === 'sell' ? `$ ${book.bookPrice}` : 'For Exchange'}
                 </p>
 
-                {/* Book Status Dropdown */}
                 <div className="mt-2">
-                <select
-                  value={book.bookStatus === 'sold' ? 'sold' : 'available'}
-                  onChange={(e) => handleStatusChange(book._id, e.target.value)}
-                  className="text-sm border rounded px-2 py-1 mt-1"
-                >
-                  <option value="available">Available</option>
-                  <option value="sold">Sold</option>
-                </select>
-
+                  <select
+                    value={book.bookStatus === 'sold' ? 'sold' : 'available'}
+                    onChange={(e) => handleStatusChange(book._id, e.target.value)}
+                    className="text-sm border rounded px-2 py-1 mt-1 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  >
+                    <option value="available">Available</option>
+                    <option value="sold">Sold</option>
+                  </select>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}

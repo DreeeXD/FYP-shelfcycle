@@ -27,7 +27,7 @@ const HeaderNotifications = ({ onClose, onRead, socket }) => {
 
     fetchNotifications();
 
-    // Real-time listener for new notifications
+    // Real-time listener
     if (socket) {
       socket.on("receive_notification", (newNotification) => {
         setNotifications((prev) => [newNotification, ...prev]);
@@ -50,17 +50,17 @@ const HeaderNotifications = ({ onClose, onRead, socket }) => {
         setNotifications((prev) =>
           prev.map((n) => ({ ...n, isRead: true }))
         );
-        onRead(); // Reset bell count
+        onRead();
       }
     } catch (err) {
-      console.error("Error marking all notifications as read", err);
+      console.error("Error marking all as read", err);
     }
   };
 
   return (
-    <div className="absolute right-[-100px] top-12 sm:top-10 w-[90vw] sm:w-80 bg-white border rounded-md shadow-xl z-50 max-h-[400px] overflow-y-auto scroll-smooth">
-      <div className="flex items-center justify-between px-4 py-3 border-b bg-gray-50 sticky top-0 z-10">
-        <span className="font-semibold text-gray-800 text-sm">Notifications</span>
+    <div className="absolute right-[-100px] top-12 sm:top-10 w-[90vw] sm:w-80 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border dark:border-gray-700 rounded-md shadow-xl z-50 max-h-[400px] overflow-y-auto scroll-smooth transition-colors duration-300">
+      <div className="flex items-center justify-between px-4 py-3 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
+        <span className="font-semibold text-sm">Notifications</span>
         {notifications.length > 0 && (
           <button
             onClick={handleMarkAllAsRead}
@@ -72,7 +72,7 @@ const HeaderNotifications = ({ onClose, onRead, socket }) => {
       </div>
 
       {loading ? (
-        <div className="p-4 text-sm text-gray-500">Loading...</div>
+        <div className="p-4 text-sm text-gray-500 dark:text-gray-400">Loading...</div>
       ) : notifications.length === 0 ? (
         <div className="p-4 text-sm text-gray-400 italic text-center">
           🎉 You’re all caught up!
@@ -88,18 +88,18 @@ const HeaderNotifications = ({ onClose, onRead, socket }) => {
                   method: "PATCH",
                   credentials: "include",
                 });
-                onRead(); // Reset bell count
-                onClose(); // Close the dropdown
+                onRead();
+                onClose();
               } catch (err) {
                 console.error("Failed to mark notification as read", err);
               }
             }}
-            className={`block px-4 py-3 text-sm border-b hover:bg-gray-100 cursor-pointer ${
-              !notification.isRead ? "bg-blue-50" : ""
+            className={`block px-4 py-3 text-sm border-b dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer ${
+              !notification.isRead ? "bg-blue-50 dark:bg-blue-900" : ""
             }`}
           >
             <p>{notification.message}</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
               {new Date(notification.createdAt).toLocaleString()}
             </p>
           </Link>
