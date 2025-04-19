@@ -118,7 +118,7 @@ const Header = ({ socket }) => {
         toast.success(data.message);
         dispatch(setUserDetails(null));
         setProfileMenu(false);
-        navigate('/login');
+        navigate('/');
       } else {
         toast.error(data.message || "Logout failed");
       }
