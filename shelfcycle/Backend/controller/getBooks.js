@@ -13,8 +13,8 @@ const getBooksController = async (request, response) => {
 
     const getBooks = await bookModel
       .find(filter)
-      .select("bookTitle bookAuthor bookImage bookType bookPrice bookStatus isExchanged uploadedBy createdAt") // ensure we return these fields
-      .populate("uploadedBy", "username email averageRating") // optional if you need uploader info
+      .select("bookTitle bookAuthor bookImage bookType bookPrice bookCondition bookStatus isExchanged uploadedBy createdAt") 
+      .populate("uploadedBy", "username email averageRating") 
 
       .sort({ createdAt: -1 });
 

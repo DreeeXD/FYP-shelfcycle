@@ -84,6 +84,11 @@ const SummaryAPI = {
     url: `${domainBackend}/api/chat-users`,
     method: "GET",
   }, 
+  newsletterSubscribe: {
+    url: `${domainBackend}/api/newsletter/subscribe`,
+    method: "POST",
+  },
+  
   searchUsers: {
     url: `${domainBackend}/api/search-users`,
     method: "GET",
@@ -91,6 +96,10 @@ const SummaryAPI = {
   markAllNotificationsRead: {
     url: `${domainBackend}/api/notifications/mark-all-read`,
     method: "PUT",
+  },
+  getAllReviews: {
+    url: `${domainBackend}/api/reviews`,
+    method: "GET",
   },
   sendMessage: {
     url: `${domainBackend}/api/messages`,

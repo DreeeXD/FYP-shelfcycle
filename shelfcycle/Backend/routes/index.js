@@ -32,6 +32,8 @@ const markBookStatus = require('../controller/markBookStatus');
 const notificationRoutes = require("./notificationRoutes");
 const authRoutes = require("./authRoutes");
 const VerifyEmailOTP = require('../controller/verifyEmailOTP');
+const { subscribe } = require('../controller/newsletterSubscriber');
+const newsletterRoutes = require('./newsletterRoutes');
 
 // Auth routes
 router.post('/signup', SignupUserController);
@@ -71,6 +73,8 @@ router.get('/wishlist', authenticationToken, getUserWishlist);
 router.post('/wishlist', authenticationToken, toggleWishlist);
 
 router.use("/notifications", notificationRoutes);
+
+router.use("/newsletter", newsletterRoutes);
 
 
 router.use("/auth", authRoutes);

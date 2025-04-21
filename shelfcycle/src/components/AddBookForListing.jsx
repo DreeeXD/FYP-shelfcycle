@@ -1,5 +1,4 @@
-// AddBookForListing.js
-import React, { useState } from "react";
+import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { MdDeleteForever } from "react-icons/md";
 import uploadImage from "../helpers/uploadImage";
@@ -23,7 +22,7 @@ const AddBookForListing = ({ onClose, onBookAdded }) => {
   const [uploading, setUploading] = useState(false);
   const [openImageEnlarge, setOpenImageEnlarge] = useState(false);
   const [imageEnlarge, setImageEnlarge] = useState("");
-  const navigate = useNavigate();
+
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;

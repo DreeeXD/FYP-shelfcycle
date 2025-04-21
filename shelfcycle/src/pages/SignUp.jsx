@@ -101,19 +101,7 @@ const SignUp = () => {
           </p>
   
           <form onSubmit={handleSubmit}>
-            {/* Username */}
-            <div className="mb-4">
-              <label className="block font-medium">Username</label>
-              <input
-                type="text"
-                name="username"
-                value={data.username}
-                onChange={handleChange}
-                required
-                placeholder="Enter your username"
-                className="w-full px-4 py-2 mt-1 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
+            
   
             {/* Email */}
             <div className="mb-4">
@@ -125,6 +113,20 @@ const SignUp = () => {
                 onChange={handleChange}
                 required
                 placeholder="you@example.com"
+                className="w-full px-4 py-2 mt-1 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+
+            {/* Username */}
+            <div className="mb-4">
+              <label className="block font-medium">Username</label>
+              <input
+                type="text"
+                name="username"
+                value={data.username}
+                onChange={handleChange}
+                required
+                placeholder="Enter your username"
                 className="w-full px-4 py-2 mt-1 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>

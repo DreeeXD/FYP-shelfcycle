@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AddBookForListing from '../components/AddBookForListing';
 import SummaryAPI from '../common';
 import PropTypes from 'prop-types';
@@ -156,13 +156,8 @@ const Exchanges = () => {
   );
 };
 
-const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, refValue, onWishlist, wishlist }) => {
-  const getMaxHeight = (showMore, totalItems) => {
-    const itemHeight = 500;
-    const itemsPerRow = 4;
-    const visibleRows = Math.ceil((showMore ? totalItems : 4) / itemsPerRow);
-    return `${visibleRows * itemHeight + 60}px`;
-  };
+const BookSection = ({ title, sort, setSort, books, showMore, setShowMore, onWishlist, wishlist }) => {
+  
 
   return (
     <section className="px-6 py-6 bg-white dark:bg-gray-900 shadow-inner rounded-md my-6 mx-4 md:mx-12">

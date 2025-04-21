@@ -17,6 +17,15 @@ exports.getReviewsByUserId = async (req, res) => {
   }
 };
 
+exports.getAllReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find().populate("reviewer");
+    res.json({ success: true, data: reviews });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Failed to fetch reviews" });
+  }
+};
+
 exports.addReview = async (req, res) => {
   try {
     const { rating, comment } = req.body;

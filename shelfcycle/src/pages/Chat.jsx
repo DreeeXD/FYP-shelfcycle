@@ -21,6 +21,8 @@ const ChatPage = () => {
   const [currentMsg, setCurrentMsg] = useState("");
   const [partnerTyping, setPartnerTyping] = useState(false);
   const [unreadMap, setUnreadMap] = useState({});
+  // const [onlineUsers, setOnlineUsers] = useState([]);
+  // const [lastSeen, setLastSeen] = useState({});
   const chatBoxRef = useRef(null);
 
   useEffect(() => {
@@ -30,8 +32,7 @@ const ChatPage = () => {
 
     socket.on("receive_message", (message) => {
       const isCurrentChat =
-        message.sender === selectedUser?._id ||
-        message.receiver === selectedUser?._id;
+        message.sender === selectedUser?._id || message.receiver === selectedUser?._id;
 
       if (isCurrentChat) {
         setMessages((prev) => [...prev, message]);
@@ -46,19 +47,25 @@ const ChatPage = () => {
         }));
       }
 
-      const otherUserId =
-        message.sender === user._id ? message.receiver : message.sender;
+      const otherUserId = message.sender === user._id ? message.receiver : message.sender;
       if (!chatUsers.some((u) => u._id === otherUserId)) fetchChatUsers();
     });
 
     socket.on("typing", () => setPartnerTyping(true));
     socket.on("stop_typing", () => setPartnerTyping(false));
+
     socket.on("message_read", ({ messageId }) => {
       setMessages((prev) =>
-        prev.map((msg) =>
-          msg._id === messageId ? { ...msg, isRead: true } : msg
-        )
+        prev.map((msg) => (msg._id === messageId ? { ...msg, isRead: true } : msg))
       );
+    });
+
+    socket.on("online_users", (users) => {
+      setOnlineUsers(users);
+    });
+
+    socket.on("user_last_seen", ({ userId, timestamp }) => {
+      setLastSeen((prev) => ({ ...prev, [userId]: timestamp }));
     });
 
     return () => {
@@ -66,6 +73,8 @@ const ChatPage = () => {
       socket.off("typing");
       socket.off("stop_typing");
       socket.off("message_read");
+      socket.off("online_users");
+      socket.off("user_last_seen");
     };
   }, [user, selectedUser]);
 
@@ -74,6 +83,16 @@ const ChatPage = () => {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (receiverId && chatUsers.length > 0) {
+      const matchedUser = chatUsers.find((u) => u._id === receiverId);
+      if (matchedUser) {
+        setSelectedUser(matchedUser);
+        fetchMessages(receiverId);
+      }
+    }
+  }, [receiverId, chatUsers]);
 
   const fetchChatUsers = async () => {
     try {
@@ -86,16 +105,6 @@ const ChatPage = () => {
       console.error("Fetch chat users failed", err);
     }
   };
-
-  useEffect(() => {
-    if (receiverId && chatUsers.length > 0) {
-      const matchedUser = chatUsers.find((u) => u._id === receiverId);
-      if (matchedUser) {
-        setSelectedUser(matchedUser);
-        fetchMessages(receiverId);
-      }
-    }
-  }, [receiverId, chatUsers]);
 
   const fetchMessages = async (partnerId) => {
     try {
@@ -164,6 +173,14 @@ const ChatPage = () => {
 
   const generateRoomId = (id1, id2) => [id1, id2].sort().join("-");
 
+  // const getUserStatus = (userId) => {
+  //   if (onlineUsers.includes(userId)) return "Online";
+  //   const seen = lastSeen[userId];
+  //   if (!seen) return "Offline";
+  //   const diffMins = Math.floor((Date.now() - new Date(seen)) / (1000 * 60));
+  //   return diffMins < 1 ? "Just now" : `${diffMins}m ago`;
+  // };
+
   if (!user) {
     return (
       <div className="h-screen flex justify-center items-center text-gray-600 dark:text-gray-300">
@@ -188,18 +205,28 @@ const ChatPage = () => {
                   ? "bg-blue-200 dark:bg-blue-800"
                   : "hover:bg-blue-100 dark:hover:bg-gray-700"}`}
             >
-              {u.uploadPic ? (
-                <img
-                  src={u.uploadPic}
-                  alt={u.username}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full font-semibold uppercase">
-                  {u.username[0]}
+              <div className="relative">
+                {u.uploadPic ? (
+                  <img
+                    src={u.uploadPic}
+                    alt={u.username}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full font-semibold uppercase">
+                    {u.username[0]}
+                  </div>
+                )}
+                
+              </div>
+
+              <div className="flex-1">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium truncate">{u.username}</span>
+                  
                 </div>
-              )}
-              <span className="text-sm font-medium truncate">{u.username}</span>
+              </div>
+
               {unreadMap[u._id] > 0 && (
                 <div className="absolute right-3 bg-blue-600 text-white text-xs rounded-full px-2 py-0.5">
                   {unreadMap[u._id]}
@@ -223,12 +250,15 @@ const ChatPage = () => {
                   {selectedUser.username[0]}
                 </div>
               )}
-              <Link
-                to={`/user/${selectedUser._id}`}
-                className="text-xl font-bold text-blue-700 dark:text-blue-400 hover:underline"
-              >
-                {selectedUser.username}
-              </Link>
+              <div>
+                <Link
+                  to={`/user/${selectedUser._id}`}
+                  className="text-xl font-bold text-blue-700 dark:text-blue-400 hover:underline"
+                >
+                  {selectedUser.username}
+                </Link>
+                
+              </div>
             </>
           ) : (
             <p className="text-gray-500 dark:text-gray-400">Select a user to start chatting</p>
