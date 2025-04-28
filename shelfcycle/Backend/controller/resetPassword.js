@@ -6,7 +6,7 @@ const ResetPassword = async (req, res) => {
   const { password } = req.body;
 
   try {
-    // Find user by reset token
+    //find user by reset token
     const user = await userModel.findOne({
       resetPasswordToken: token,
       resetPasswordExpires: { $gt: Date.now() }, // token not expired
@@ -19,11 +19,11 @@ const ResetPassword = async (req, res) => {
       });
     }
 
-    // 🔐 Hash the new password
+    //hash the new password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
 
-    // Clear reset fields
+    //clear reset fields
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
 

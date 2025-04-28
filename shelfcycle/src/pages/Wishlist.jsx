@@ -108,7 +108,7 @@ const Wishlist = () => {
                       <h2 className="font-semibold text-lg truncate">{book.bookTitle}</h2>
                       <p className="text-sm truncate text-gray-600 dark:text-gray-300">by {book.bookAuthor}</p>
                       {book.bookType === "sell" && (
-                        <p className="text-md font-bold text-blue-600 mt-2">$ {book.bookPrice}</p>
+                        <p className="text-md font-bold text-blue-600 mt-2">Rs. {book.bookPrice}</p>
                       )}
                     </div>
                   </Link>

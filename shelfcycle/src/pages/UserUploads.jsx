@@ -172,7 +172,7 @@ const UserUploads = () => {
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 truncate">{book.bookTitle}</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 truncate">by {book.bookAuthor}</p>
                 <p className={`text-sm font-medium ${book.bookType === 'sell' ? 'text-blue-600' : 'text-yellow-600'}`}>
-                  {book.bookType === 'sell' ? `$ ${book.bookPrice}` : 'For Exchange'}
+                  {book.bookType === 'sell' ? `Rs. ${book.bookPrice}` : 'For Exchange'}
                 </p>
 
                 <div className="mt-2">

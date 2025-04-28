@@ -4,19 +4,19 @@ module.exports = (io) => {
   io.on("connection", (socket) => {
     console.log("New socket connected:", socket.id);
 
-    // When a user joins with their userId
+    //when a user joins with their userId
     socket.on("register_user", (userId) => {
       connectedUsers.set(userId, socket.id);
       console.log(`User ${userId} connected with socket ${socket.id}`);
     });
 
-    // Join a private chat room
+    //join a private chat room
     socket.on("join_room", (roomId) => {
       socket.join(roomId);
       console.log(`Socket ${socket.id} joined room ${roomId}`);
     });
 
-    // Handle sending a message in real-time
+    //handle sending a message in real-time
     socket.on("send_message", ({ roomId, message }) => {
       socket.to(roomId).emit("receive_message", message);
       console.log(`Message sent in room ${roomId}:`, message);
@@ -36,7 +36,7 @@ module.exports = (io) => {
       });
       
 
-    // Real-time notifications (to specific user)
+    //real-time notifications (to specific user)
     socket.on("send_notification", ({ recipientId, notification }) => {
       const targetSocket = connectedUsers.get(recipientId);
       if (targetSocket) {
@@ -45,7 +45,7 @@ module.exports = (io) => {
       }
     });
 
-    // Clean up on disconnect
+    //clean up on disconnect
     socket.on("disconnect", () => {
       console.log("Socket disconnected:", socket.id);
       for (let [userId, sockId] of connectedUsers.entries()) {

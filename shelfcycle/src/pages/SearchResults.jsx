@@ -160,7 +160,7 @@ const SearchResults = () => {
                     </p>
                     {book.bookType === 'sell' && (
                       <p className="text-md font-bold text-blue-600 dark:text-blue-400 mt-2">
-                        $ {book.bookPrice}
+                        Rs {book.bookPrice}
                       </p>
                     )}
                   </div>

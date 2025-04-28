@@ -21,7 +21,7 @@ const updateBookController = async (req, res) => {
       });
     }
 
-    // Optional: still nullify price if it's an exchange book
+    //still nullify price if it's an exchange book (optional)
     if (updateData.bookType === "exchange") {
       updateData.bookPrice = null;
     }

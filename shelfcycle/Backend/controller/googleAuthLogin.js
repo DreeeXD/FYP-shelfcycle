@@ -19,23 +19,23 @@ const GoogleAuthLogin = async (req, res) => {
     let user = await userModel.findOne({ email });
 
     if (!user) {
-      // Create new user and auto-verify
+      //create new user and auto-verify
       user = await userModel.create({
         email,
         username: name,
         uploadPic: picture,
         password: sub,
-        emailVerified: true, // ✅ Skip OTP and mark verified
+        emailVerified: true, 
       });
     }
 
-    // If user was created via signup and still unverified (somehow)
+    //if user was created via signup and still unverified (before integrating OTP verification)
     if (!user.emailVerified) {
       user.emailVerified = true;
       await user.save();
     }
 
-    // Generate token
+    //generate token
     const token = generateToken(user._id);
 
     res.cookie('token', token, {

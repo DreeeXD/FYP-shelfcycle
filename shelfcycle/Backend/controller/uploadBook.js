@@ -39,9 +39,9 @@ const sendNewsletterEmail = async (book) => {
       await transporter.sendMail(mailOptions);
     }
 
-    console.log("✅ Newsletter emails sent to all subscribers.");
+    console.log("Newsletter emails sent to all subscribers.");
   } catch (err) {
-    console.error("❌ Failed to send newsletter email:", err.message);
+    console.error("Failed to send newsletter email:", err.message);
   }
 };
 
@@ -75,7 +75,7 @@ const uploadBookController = async (req, res) => {
       link: `/book-details/${savedBook._id}`,
     });
 
-    // ✅ Send newsletter to subscribers
+    // Send newsletter to subscribers
     await sendNewsletterEmail(savedBook);
 
     res.status(201).json({

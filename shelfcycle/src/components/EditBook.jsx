@@ -167,7 +167,7 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
                   htmlFor="bookPrice"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
                 >
-                  Price ($)
+                  Price (Rs.)
                 </label>
                 <input
                   type="number"

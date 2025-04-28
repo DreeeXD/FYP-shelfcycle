@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 async function connectDB() {
     try{
-        await mongoose.connect(process.env.MONGODB_URI) //await because it is a
+        await mongoose.connect(process.env.MONGODB_URI) //await because it is a promise
         // console.log('Connected to MongoDB successfully');
     }
     catch(error){

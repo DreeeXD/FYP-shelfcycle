@@ -123,7 +123,7 @@ const BookDetails = () => {
             </span>
 
             {book.bookType === "sell" && (
-              <span className="text-blue-600 font-semibold text-lg">$ {book.bookPrice}</span>
+              <span className="text-blue-600 font-semibold text-lg">Rs. {book.bookPrice}</span>
             )}
           </div>
 

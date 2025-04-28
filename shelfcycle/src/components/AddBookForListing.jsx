@@ -156,7 +156,7 @@ const AddBookForListing = ({ onClose, onBookAdded }) => {
           {data.bookType === "sell" && (
             <div>
               <label htmlFor="bookPrice" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Price ($)
+                Price (Rs.)
               </label>
               <input
                 type="number"

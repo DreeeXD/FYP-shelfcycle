@@ -216,7 +216,8 @@ const BookCard = ({ book, onWishlist, isWishlisted }) => {
     <div className="relative w-full h-full flex flex-col">
       <Link
         to={`/book-details/${book._id}`}
-        className="flex-1 flex flex-col justify-between bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 dark:border-gray-700 p-4 hover:scale-[1.02] duration-300 ease-in-out"
+        className="flex-1 flex flex-col justify-between bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 dark:border-gray-700 p-4 
+        hover:scale-[1.02] duration-300 ease-in-out"
       >
         <div
           className={`absolute top-2 right-2 px-3 py-1 text-xs rounded-full font-medium drop-shadow ${
@@ -243,7 +244,7 @@ const BookCard = ({ book, onWishlist, isWishlisted }) => {
           <p className="text-sm text-gray-600 dark:text-gray-400 truncate">by {book.bookAuthor}</p>
           {book.bookType === 'sell' && (
             <p className="text-md font-bold text-blue-600 dark:text-blue-400 mt-2">
-              $ {book.bookPrice}
+              Rs. {book.bookPrice}
             </p>
           )}
         </div>
