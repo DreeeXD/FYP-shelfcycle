@@ -191,6 +191,7 @@ const EditBook = ({ onClose, bookData, onBookUpdated }) => {
                 accept="image/*"
                 onChange={handleUploadProduct}
                 className="w-full text-sm p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                required
               />
               {uploading && (
                 <p className="text-blue-500 text-sm mt-1">Uploading...</p>

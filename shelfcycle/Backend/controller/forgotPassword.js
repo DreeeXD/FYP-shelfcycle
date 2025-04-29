@@ -27,7 +27,10 @@ const ForgotPassword = async (req, res) => {
 
     await sendEmail(user.email, "Reset your ShelfCycle password", html);
 
-    res.json({ success: true, message: "Reset link sent to your email." });
+    res.json({ 
+      success: true,
+       message: "Reset link sent to your email."
+       });
   } catch (err) {
     console.error("Forgot password error:", err);
     res.status(500).json({ error: "Failed to send email." });
