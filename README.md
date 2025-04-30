@@ -1,6 +1,6 @@
 To run this project locally, follow the following steps:
 1. **Clone the repository**
-   git clone [repo_url]
+   ```git clone [repo_url]```
    
 2.  **Navigate to the project directory**
    cd shelfcycle
